@@ -1,8 +1,7 @@
 # [START imports]
 import os
-import model
+import app.model
 import json
-import time
 
 import jinja2
 import webapp2

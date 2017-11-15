@@ -1,35 +1,29 @@
 indexes:
-- kind: Photo
-  ancestor: yes
-  properties:
-  - name: up_stream
-  - name: title
-  - name: comment
-  - name: last_update
-  - name: content
-
-- kind: Stream
-  ancestor: yes
-  properties:
-  - name: owner
-  - name: stream_name
-  - name: last_update
-  - name: photo_counts
-  - name: cover_image
-  - name: total_views
-  - name: tags
-  - name: views_in_last_hour
 
 - kind: User
   ancestor: no
   properties:
-  - name: user_id
-  - name: trending_setting
-  - name: subscribe_list
-  - name: photo_counts
+  - name: user_email
+  - name: user_name
+  - name: ratings
+  - name: credit
+  - name: profile_image
 
-- kind: View
+
+- kind: Task
   ancestor: no
   properties:
-  - name: up_stream
-  - name: time_stamp
+  - name: owner_email
+  - name: helper
+  - name: helpee
+  - name: title
+  - name: description
+  - name: type
+  - name: category
+  - name: task_location
+  - name: final_dest
+  - name: time_created
+  - name: last_update
+  - name: expiration_time
+  - name: credit
+  - name: status
