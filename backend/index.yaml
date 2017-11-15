@@ -1,0 +1,35 @@
+indexes:
+- kind: Photo
+  ancestor: yes
+  properties:
+  - name: up_stream
+  - name: title
+  - name: comment
+  - name: last_update
+  - name: content
+
+- kind: Stream
+  ancestor: yes
+  properties:
+  - name: owner
+  - name: stream_name
+  - name: last_update
+  - name: photo_counts
+  - name: cover_image
+  - name: total_views
+  - name: tags
+  - name: views_in_last_hour
+
+- kind: User
+  ancestor: no
+  properties:
+  - name: user_id
+  - name: trending_setting
+  - name: subscribe_list
+  - name: photo_counts
+
+- kind: View
+  ancestor: no
+  properties:
+  - name: up_stream
+  - name: time_stamp
