@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">iHelp</string>
+    <string name="title_activity_view_all">ViewAll</string>
+    <string name="i_need_help">I need help</string>
+    <string name="i_can_help">I can help</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="other">Other</string>
+    <string name="main_goto">Go to view all</string>
+    <string name="manage_page">This is manage page</string>
+    <string name="post_a_task">This is post a task page</string>
+    <string name="foot">Food</string>
+    <string name="drink">Drink</string>
+    <string name="ride">Ride</string>
 </resources>
