@@ -16,8 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".INeedHelp" />
-        <activity android:name=".ICanHelp"></activity>
+        <activity
+            android:name=".ViewAll"
+            android:label="@string/title_activity_view_all"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
