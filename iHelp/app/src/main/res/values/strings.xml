@@ -12,4 +12,6 @@
     <string name="foot">Food</string>
     <string name="drink">Drink</string>
     <string name="ride">Ride</string>
+    <string name="action">Action</string>
+    <string name="place_holder">Place Holder</string>
 </resources>
