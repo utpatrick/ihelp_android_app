@@ -12,6 +12,9 @@
     <string name="foot">Food</string>
     <string name="drink">Drink</string>
     <string name="ride">Ride</string>
+    <string name="facebook_app_id">413817815701668</string>
+    <string name="fb_login_protocol_scheme">fb413817815701668</string>
+
 
     <!-- Slide_1 info -->
     <string name="slide_1_title">Food</string>

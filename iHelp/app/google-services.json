@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "925660977008",
+    "project_id": "firebase-ihelp"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:925660977008:android:f78878b3e3b0868d",
+        "android_client_info": {
+          "package_name": "com.utexas.ee382v.ihelp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "925660977008-jof9dcatjgr75hc9g39igmejnpsmaabd.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "925660977008-va4phtg8seeh97774gfvgmdd0hbbdhi3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.utexas.ee382v.ihelp",
+            "certificate_hash": "d5d42cdd85df4dd1859e736a56e374795b970194"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGaslXyLEmazWcbABHrArlmmLyTfPIx4o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
