@@ -22,7 +22,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     private LinearLayout Dots_Layout;
     private ImageView[] dots;
 
-    private Button BnNext, BnSkip;
+    private Button BnNext;
+    private Button BnSkip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
