@@ -4,26 +4,18 @@ threadsafe: true
 
 # [START handlers]
 handlers:
-- url: /favicon\.ico
-  static_files: favicon.ico
-  upload: favicon\.ico
 
 - url: /static
   static_dir: static
   
-- url: /
-  script: /app/ihelp_class1.app
+- url: /icanhelp
+  script: app.i_can_help.app
 
-- url: /view_image
-  script: connexus.app
+- url: /ineedhelp
+  script: app.i_need_help.app
 
-- url: .*
-  script: connexus.app
-
-# Path variables
-- url: /resources
-  static_dir: resources
-
+- url: /viewtask
+  script: app.view_task.app
 # [END handlers]
 
 # [START libraries]
@@ -33,6 +25,3 @@ libraries:
 - name: jinja2
   version: latest
 # [END libraries]
-
-
-
