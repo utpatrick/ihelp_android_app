@@ -19,4 +19,8 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ViewAll.class);
         startActivity(intent);
     }
+
+    public static String getBaseUrl() {
+        return BASE_URL;
+    }
 }
