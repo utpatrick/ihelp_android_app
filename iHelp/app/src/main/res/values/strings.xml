@@ -31,6 +31,10 @@
     <!-- Slide_4 info -->
     <string name="slide_4_title">More</string>
     <string name="slide_4_desc">Get anything from others or for others!</string>
+    <string name="finished">Finished</string>
+    <string name="ongoing">Ongoing</string>
+    <string name="pending">Pending</string>
+    <string name="title_activity_edit_profile">EditProfile</string>
 
 
 </resources>

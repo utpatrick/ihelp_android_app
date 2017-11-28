@@ -11,18 +11,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/foot"
+        android:text="@string/pending"
         app:layout_constraintEnd_toStartOf="@+id/ican_help_cb2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/profile_image" />
 
     <CheckBox
         android:id="@+id/ican_help_cb2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/drink"
+        android:text="@string/ongoing"
         app:layout_constraintBottom_toBottomOf="@+id/ican_help_cb1"
         app:layout_constraintEnd_toStartOf="@+id/ican_help_cb3"
         app:layout_constraintHorizontal_bias="0.5"
@@ -33,33 +33,37 @@
         android:id="@+id/ican_help_cb3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ride"
+        android:layout_marginEnd="8dp"
+        android:text="@string/finished"
         app:layout_constraintBottom_toBottomOf="@+id/ican_help_cb2"
-        app:layout_constraintEnd_toStartOf="@+id/ican_help_cb4"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ican_help_cb2"
         app:layout_constraintTop_toTopOf="@+id/ican_help_cb2" />
 
-    <CheckBox
-        android:id="@+id/ican_help_cb4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/other"
-        app:layout_constraintBottom_toBottomOf="@+id/ican_help_cb3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/ican_help_cb3"
-        app:layout_constraintTop_toTopOf="@+id/ican_help_cb3" />
-
     <ListView
-        android:id="@+id/ican_help_listview"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:id="@+id/manage_listview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:scrollingCache="true"
+        android:smoothScrollbar="true"
+        android:stretchMode="columnWidth"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ican_help_cb1" />
+
+    <ImageButton
+        android:id="@+id/profile_image"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ican_help_cb1" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
 
 </android.support.constraint.ConstraintLayout>
