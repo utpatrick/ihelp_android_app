@@ -14,12 +14,14 @@
     <string name="ride">Ride</string>
     <string name="facebook_app_id">413817815701668</string>
     <string name="fb_login_protocol_scheme">fb413817815701668</string>
+
     <string-array name="task_names">
         <item>Food</item>
         <item>Drink</item>
         <item>Drive</item>
         <item>Other</item>
     </string-array>
+
 
 
     <!-- Slide_1 info -->

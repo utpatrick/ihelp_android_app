@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
     private void updateUI(boolean isLogin){
         if(isLogin){
             //Name.setVisibility(View.VISIBLE);
@@ -217,8 +218,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             handleResult(result);
         }
     }
-
-
-
 
 }
