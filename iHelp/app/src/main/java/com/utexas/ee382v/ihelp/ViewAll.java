@@ -48,8 +48,6 @@ public class ViewAll extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all);
-        View mainContent = findViewById(R.id.main_content);
-        setupUI(mainContent);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -57,6 +55,8 @@ public class ViewAll extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         setupViewPager(mViewPager);
 
+        View mainContent = findViewById(R.id.main_content);
+        setupUI(mainContent);
 
         bottomNavigation = (AHBottomNavigation) findViewById(R.id.bottom_navigation);
         AHBottomNavigationItem item1 = new AHBottomNavigationItem("I need help", R.drawable.search_help);
