@@ -1,7 +1,9 @@
 {
   "project_info": {
     "project_number": "925660977008",
-    "project_id": "firebase-ihelp"
+    "firebase_url": "https://fir-ihelp.firebaseio.com",
+    "project_id": "firebase-ihelp",
+    "storage_bucket": "firebase-ihelp.appspot.com"
   },
   "client": [
     {
@@ -12,6 +14,34 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "925660977008-j70tlrk6r082avg7ivjdkejtggim3ai7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.utexas.ee382v.ihelp",
+            "certificate_hash": "33b897632b1bddee06e1ff41fb3a0bb2e7fdb3e9"
+          }
+        },
+        {
+          "client_id": "925660977008-oftb3efld5e6ju31g51bgitq82r5t63k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.utexas.ee382v.ihelp",
+            "certificate_hash": "ef9798a3f65d1b7dab97da7d988e9fdfd36dc3bc"
+          }
+        },
+        {
+          "client_id": "925660977008-cufsleb8ggfh5r290b25e56taooe9auq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.utexas.ee382v.ihelp",
+            "certificate_hash": "1787443371499e41bf1e85e1d78de9fe0a3878df"
+          }
+        },
+        {
+          "client_id": "925660977008-f3o03e4lhaorklg0jkfruqq388ibckv6.apps.googleusercontent.com",
+          "client_type": 3
+        },
         {
           "client_id": "925660977008-jof9dcatjgr75hc9g39igmejnpsmaabd.apps.googleusercontent.com",
           "client_type": 3
@@ -35,11 +65,16 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "925660977008-f3o03e4lhaorklg0jkfruqq388ibckv6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
