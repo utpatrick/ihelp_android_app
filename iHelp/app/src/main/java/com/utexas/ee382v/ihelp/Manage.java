@@ -36,6 +36,8 @@ public class Manage extends Fragment {
                 "This is i need help, this is more content", "/static/images"));
         tasks.add(new TaskCard("Do something wired",
                 "This is i need help, this is more content", "/static/images"));
+        tasks.add(new TaskCard("Do something wired",
+                "This is i need help, this is more content", "/static/images"));
         return tasks;
     }
 
