@@ -60,7 +60,7 @@ public class TaskListAdapter extends ArrayAdapter<TaskCard>{
         holder.imageView.setTag(item.getIconUrl());
         String link = item.getIconUrl();
         if (link == null || link.length() < 1 || link.startsWith("/static/images/")) {
-            Picasso.with(mContext).load(R.drawable.default_image).into(holder.imageView);
+            Picasso.with(mContext).load(R.drawable.active_dots).into(holder.imageView);
         } else {
             Picasso.with(mContext).load(item.getIconUrl()).into(holder.imageView);
         }

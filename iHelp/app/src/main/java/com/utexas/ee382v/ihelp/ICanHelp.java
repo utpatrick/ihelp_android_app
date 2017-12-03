@@ -33,7 +33,7 @@ public class ICanHelp extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ican_help, container, false);
         ListView listView = (ListView) view.findViewById(R.id.ican_help_listview);
-        String url = MainActivity.getBaseUrl();
+        String url = MainActivity.getEndpoint();
         getAllTasks(url, view);
 //        TaskListAdapter listAdapter = new TaskListAdapter(getActivity(), R.layout.task_card, items);
 //        listView.setAdapter(listAdapter);
@@ -82,5 +82,6 @@ public class ICanHelp extends Fragment {
 //        tasks.add(new TaskCard("Do something wired",
 //                "This is the content, this is more content", "/static/images"));
 //        return tasks;
+
     }
 }
