@@ -17,7 +17,8 @@
         <activity
             android:name=".ViewAll"
             android:label="@string/title_activity_view_all"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".ViewTask" />
         <activity android:name=".WelcomeActivity">
             <intent-filter>

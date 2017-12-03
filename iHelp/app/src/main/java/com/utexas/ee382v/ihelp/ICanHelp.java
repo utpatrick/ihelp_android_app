@@ -35,6 +35,8 @@ public class ICanHelp extends Fragment {
                 "This is the content, this is more content", "/static/images"));
         tasks.add(new TaskCard("Do something wired",
                 "This is the content, this is more content", "/static/images"));
+        tasks.add(new TaskCard("Do something wired",
+                "This is the content, this is more content", "/static/images"));
         return tasks;
     }
 }
