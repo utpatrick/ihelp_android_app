@@ -12,13 +12,16 @@ handlers:
   static_dir: static
   
 - url: /
-  script: /app/ihelp_class1.app
+  script: app.ihelp_handlers.app
 
-- url: /view_image
-  script: connexus.app
+- url: /android/post_a_task
+  script: app.ihelp_handlers.app
+
+- url: /android/update_profile
+  script: app.ihelp_handlers.app
 
 - url: .*
-  script: connexus.app
+  script: app.ihelp_handlers.app
 
 # Path variables
 - url: /resources
@@ -33,6 +36,3 @@ libraries:
 - name: jinja2
   version: latest
 # [END libraries]
-
-
-
