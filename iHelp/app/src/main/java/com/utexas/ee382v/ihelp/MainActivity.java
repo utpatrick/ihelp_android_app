@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int REQ_CODE = 9001;
     static String name;
     static String email;
-
+    private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com/";
 
 
     @Override
@@ -126,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if(result.isSuccess()){
             GoogleSignInAccount account = result.getSignInAccount();
+            Log.d("login", "login: " + String.valueOf(account == null));
             if (account != null) {
                 this.name = account.getDisplayName();
                 this.email = account.getEmail();
@@ -135,9 +138,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(intent);
         }
         else{
+            Log.d("login", "not successful");
             updateUI(false);
         }
     }
+
 
     private void updateUI(boolean isLogin){
         if(isLogin){
@@ -163,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //Name.setVisibility(View.GONE);
             SignIn.setVisibility(View.VISIBLE);
             SignOut.setVisibility(View.GONE);
-            GotoviewAll.setVisibility(View.GONE);
+            GotoviewAll.setVisibility(View.VISIBLE);
 
             loginButton.setVisibility(View.VISIBLE);
             //mVideoView = (VideoView)findViewById(R.id.bgvideoview);
@@ -214,7 +219,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (requestCode == REQ_CODE) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            Log.d("signin", GoogleSignInStatusCodes.getStatusCodeString(result.getStatus().getStatusCode()));
             handleResult(result);
         }
+    }
+
+    public static String getEndpoint() {
+        return BACKEND_ENDPOINT;
     }
 }
