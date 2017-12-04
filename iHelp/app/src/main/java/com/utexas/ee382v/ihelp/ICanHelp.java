@@ -7,7 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.GridView;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,16 +28,13 @@ import java.util.ArrayList;
 
 public class ICanHelp extends Fragment {
 
-    static String MESSAGE = "com.utexas.ee382v.ihelp.icanhelp";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ican_help, container, false);
-        ListView listView = (ListView) view.findViewById(R.id.ican_help_listview);
-        String url = MainActivity.getEndpoint();
+        String url = MainActivity.getEndpoint()+ "/android/i_can_help";
         getAllTasks(url, view);
-//        TaskListAdapter listAdapter = new TaskListAdapter(getActivity(), R.layout.task_card, items);
-//        listView.setAdapter(listAdapter);
+        setUpCheckBox(view);
         return view;
     }
 
@@ -48,23 +46,27 @@ public class ICanHelp extends Fragment {
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject obj = response.getJSONObject(i);
-                        items.add(new TaskCard(obj.getString("title"),
-                                obj.getString("content"), obj.getString("iconurl")));
+                        items.add(new TaskCard(obj.getString("task_title"),
+                                obj.getString("task_detail"), obj.getString("task_owner")));
                     }
                     TaskListAdapter adapter = new TaskListAdapter(getActivity(), R.layout.task_card,items);
-                    ListView gv = (ListView) parent.findViewById(R.id.ican_help_listview);
-                    gv.setAdapter(adapter);
-                    gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    ListView lv = parent.findViewById(R.id.ican_help_listview);
+                    lv.setAdapter(adapter);
+                    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             Intent intent = new Intent(getActivity(), ViewTask.class);
+                            ImageView imageView = view.findViewById(R.id.task_card_image);
                             TextView textView = view.findViewById(R.id.task_card_title);
-                            intent.putExtra(MESSAGE, textView.getTag().toString());
+                            String message = imageView.getTag().toString() + "," + textView.getTag().toString();
+                            intent.putExtra(ViewAll.MESSAGE, message);
                             startActivity(intent);
                         }
                     });
                 } catch (org.json.JSONException e) {
                     e.printStackTrace();
+                } finally {
+
                 }
             }
         }, new Response.ErrorListener() {
@@ -74,14 +76,72 @@ public class ICanHelp extends Fragment {
             }
         });
         Volley.newRequestQueue(getActivity()).add(jsonRequest);
+    }
 
-//        tasks.add(new TaskCard("Do something awesome",
-//                "This is the content, this is more content", "/static/images"));
-//        tasks.add(new TaskCard("Do something bad",
-//                "This is the content, this is more content", "/static/images"));
-//        tasks.add(new TaskCard("Do something wired",
-//                "This is the content, this is more content", "/static/images"));
-//        return tasks;
+    private void setUpCheckBox(final View view) {
+        final CheckBox foodBox = view.findViewById(R.id.ican_help_cb1);
+        final CheckBox drinkBox = view.findViewById(R.id.ican_help_cb2);
+        final CheckBox rideBox = view.findViewById(R.id.ican_help_cb3);
+        final CheckBox otherBox = view.findViewById(R.id.ican_help_cb4);
 
+        foodBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckBox box = (CheckBox) v;
+                String url = MainActivity.getEndpoint()+ "/android/i_can_help";
+                if (box.isChecked()) {
+                    drinkBox.setChecked(false);
+                    rideBox.setChecked(false);
+                    otherBox.setChecked(false);
+                    url += "?category=Food";
+                }
+                getAllTasks(url, view);
+            }
+        });
+
+        drinkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckBox box = (CheckBox) v;
+                String url = MainActivity.getEndpoint()+ "/android/i_can_help";
+                if (box.isChecked()) {
+                    foodBox.setChecked(false);
+                    rideBox.setChecked(false);
+                    otherBox.setChecked(false);
+                    url += "?category=Drink";
+                }
+                getAllTasks(url, view);
+            }
+        });
+
+        rideBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckBox box = (CheckBox) v;
+                String url = MainActivity.getEndpoint()+ "/android/i_can_help";
+                if (box.isChecked()) {
+                    drinkBox.setChecked(false);
+                    foodBox.setChecked(false);
+                    otherBox.setChecked(false);
+                    url += "?category=Ride";
+                }
+                getAllTasks(url, view);
+            }
+        });
+
+        otherBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckBox box = (CheckBox) v;
+                String url = MainActivity.getEndpoint()+ "/android/i_can_help";
+                if (box.isChecked()) {
+                    drinkBox.setChecked(false);
+                    rideBox.setChecked(false);
+                    foodBox.setChecked(false);
+                    url += "?category=Other";
+                }
+                getAllTasks(url, view);
+            }
+        });
     }
 }

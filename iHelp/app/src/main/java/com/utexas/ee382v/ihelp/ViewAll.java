@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ViewAll extends AppCompatActivity {
-
+    public static final String MESSAGE = ".com.utexas.ee382v.ihelp.taskmessage";
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
