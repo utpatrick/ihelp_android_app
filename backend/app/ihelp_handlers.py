@@ -83,8 +83,8 @@ class UpdateProfile(blobstore_handlers.BlobstoreUploadHandler):
 class ICanHelp(webapp2.RequestHandler):
     def get(self):
         category = self.request.get('category')
-        tasks = model.get_tasks_by_type('need_help')
-        sorted_task = sorted(tasks, key=lambda x:x.last_update, reverse=True)
+        tasks = model.get_tasks_by_type('seek_help')
+        sorted_task = sorted(tasks, key=lambda x: x.last_update, reverse=True)
         response_content = []
         for task in sorted_task:
             owner = task.owner_email
@@ -102,7 +102,7 @@ class INeedHelp(webapp2.RequestHandler):
     def get(self):
         category = self.request.get('category')
         tasks = model.get_tasks_by_type('provide_help')
-        sorted_task = sorted(tasks, key=lambda x:x.last_update, reverse=True)
+        sorted_task = sorted(tasks, key=lambda x: x.last_update, reverse=True)
         response_content = []
         for task in sorted_task:
             owner = task.owner_email
