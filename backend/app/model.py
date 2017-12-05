@@ -14,7 +14,7 @@ class Task(ndb.Model):
     owner_email = ndb.StringProperty()
     helper = ndb.StringProperty()
     #helpee is the one who is helped by helper
-    helpee = ndb.StringProperty()
+    helpee = ndb.StringProperty
 
     title = ndb.StringProperty()
     description = ndb.StringProperty()
@@ -123,4 +123,5 @@ def update_profile(user_email, display_name, profile_image):
     user.profile_image = profile_image
     user.put()
     return 0
+
 

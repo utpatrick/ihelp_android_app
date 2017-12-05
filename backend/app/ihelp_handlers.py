@@ -36,6 +36,7 @@ class PostATask(webapp2.RequestHandler):
                                         task_location, desitination_location, task_status,
                                         task_onwer, extra_credit)
         if post_status == 0:
+
             response_content = {'status': 'ok',}
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
@@ -96,6 +97,24 @@ class ProfileImage(webapp2.RequestHandler):
             self.response.out.write(user.profile_image)
         else:
             self.response.out.write('No image')
+
+
+class ICanHelp(webapp2.RequestHandler):
+    def get(self):
+        category = self.request.get('category')
+        tasks = model.get_tasks_by_type('seek_help')
+        sorted_task = sorted(tasks, key=lambda x: x.last_update, reverse=True)
+        response_content = []
+        for task in sorted_task:
+            owner = task.owner_email
+            profile_image = model.get_icon(owner)
+            if (not category or task.category == category) and task.status != 'completed':
+                response_content.append({'task_title': task.title,
+                                         'task_detail': task.description,
+                                         'task_owner': task.owner_email,
+                                         'icon': profile_image})
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps(response_content))
 
 
 class ICanHelp(webapp2.RequestHandler):
@@ -183,6 +202,7 @@ app = webapp2.WSGIApplication([
     ('/android/i_need_help', INeedHelp),
     ('/android/view_task', ViewTask),
     ('/android/change_status', ChangeStatus),
-    ('/android/profile_image', ProfileImage)
+    ('/android/profile_image', ProfileImage),
+    ('/android/change_status', ChangeStatus)
 ], debug=True)
 # [END app]
