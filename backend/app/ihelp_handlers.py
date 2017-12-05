@@ -107,12 +107,10 @@ class ICanHelp(webapp2.RequestHandler):
         response_content = []
         for task in sorted_task:
             owner = task.owner_email
-            profile_image = model.get_icon(owner)
             if (not category or task.category == category) and task.status != 'completed':
                 response_content.append({'task_title': task.title,
                                          'task_detail': task.description,
-                                         'task_owner': task.owner_email,
-                                         'icon': profile_image})
+                                         'task_owner': task.owner_email})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
@@ -125,12 +123,10 @@ class INeedHelp(webapp2.RequestHandler):
         response_content = []
         for task in sorted_task:
             owner = task.owner_email
-            profile_image = model.get_icon(owner)
             if (not category or task.category == category) and task.status != 'completed':
                 response_content.append({'task_title': task.title,
                                          'task_detail': task.description,
-                                         'task_owner': task.owner_email,
-                                         'icon': profile_image})
+                                         'task_owner': task.owner_email})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
