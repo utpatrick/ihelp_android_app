@@ -237,6 +237,7 @@ public class PostATask extends Fragment implements View.OnClickListener{
                     params.put("task_status", task_status);
                     params.put("task_onwer", MainActivity.getUserEmail());
                     params.put("credit", "100");
+                    params.put("owner_name", MainActivity.getUserName());
                     return params;
                 }
             };

@@ -4,13 +4,10 @@ threadsafe: true
 
 # [START handlers]
 handlers:
-- url: /favicon\.ico
-  static_files: favicon.ico
-  upload: favicon\.ico
 
 - url: /static
   static_dir: static
-  
+
 - url: /
   script: app.ihelp_handlers.app
 
@@ -20,6 +17,24 @@ handlers:
 - url: /android/update_profile
   script: app.ihelp_handlers.app
 
+- url: /android/get_all_task
+  script: app.ihelp_handlers.app
+
+- url: /android/i_can_help
+  script: app.ihelp_handlers.app
+
+- url: /android/i_need_help
+  script: app.ihelp_handlers.app
+
+- url: /android/view_task
+  script: app.ihelp_handlers.app
+
+- url: /android/change_status
+  script: app.ihelp_handlers.app
+
+- url: /android/get_icon
+  script: app.ihelp_handlers.app
+
 - url: .*
   script: app.ihelp_handlers.app
 
@@ -27,6 +42,8 @@ handlers:
 - url: /resources
   static_dir: resources
 
+- url: /viewtask
+  script: app.view_task.app
 # [END handlers]
 
 # [START libraries]

@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button SignOut;
     private SignInButton SignIn;
     private GoogleApiClient googleApiClient;
+    private GoogleSignInAccount account;
     private Button GotoviewAll;
     private LoginButton loginButton;
     private CallbackManager callbackManager;
@@ -46,7 +47,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     static String email;
     static String gname;
     static String gmail;
+    private boolean signinStatus;
     private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com/";
+
 
 
     @Override
@@ -58,7 +61,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
+
         setContentView(R.layout.activity_main);
+
+        SignOut = (Button)findViewById(R.id.bn_logout);
+        SignIn = (SignInButton)findViewById(R.id.bn_login);
+        GotoviewAll = findViewById(R.id.button3);
+        SignIn.setOnClickListener(this);
+        SignOut.setOnClickListener(this);
+        //Name.setVisibility(View.GONE);
+        SignOut.setVisibility(View.GONE);
+        GotoviewAll.setVisibility(View.GONE);
+        GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestScopes(new Scope(Scopes.PLUS_LOGIN)).requestEmail().build();
+        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,signInOptions).build();
+
         loginButton = (LoginButton)findViewById(R.id.login_button);
         loginButton.setReadPermissions("email","public_profile");
 
@@ -108,29 +124,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
-
-        SignOut = (Button)findViewById(R.id.bn_logout);
-        SignIn = (SignInButton)findViewById(R.id.bn_login);
-        GotoviewAll = findViewById(R.id.button3);
-        SignIn.setOnClickListener(this);
-        SignOut.setOnClickListener(this);
-        //Name.setVisibility(View.GONE);
-        SignOut.setVisibility(View.GONE);
-        GotoviewAll.setVisibility(View.GONE);
-        GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestScopes(new Scope(Scopes.PLUS_LOGIN)).requestEmail().build();
-        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,signInOptions).build();
     }
 
     public static String getUserEmail(){
-        return email;
+        if (gmail == null && email != null) {
+            return email;
+        }
+        else if (gmail != null && email == null) {
+            return gmail;
+        }
+        else if (gmail != null && email != null) {
+            return gmail;
+        }
+        return null;
     }
 
     public static String getUserName() {
-        return name;
+        if (name == null && gname != null) {
+            return gname;
+        }
+        else if (gname != null && name == null) {
+            return name;
+        }
+        else if (gname != null && name != null) {
+            return gname;
+        }
+        return null;
     }
 
     private void signIn(){
         Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        signinStatus = true;
         //System.out.print(name);
         //System.out.print(email);
         startActivityForResult(intent, REQ_CODE);
@@ -148,13 +172,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void handleResult(GoogleSignInResult result){
 
         if(result.isSuccess()){
-            GoogleSignInAccount account = result.getSignInAccount();
+            account = result.getSignInAccount();
             Log.d("login", "login: " + String.valueOf(account == null));
             if (account != null) {
                 this.gname = account.getDisplayName();
                 this.gmail = account.getEmail();
-                //System.out.print(gname);
-                //System.out.print(email);
                 updateUI(true);
             }
             Intent intent = new Intent(this, ViewAll.class);
@@ -169,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void updateUI(boolean isLogin){
         if(isLogin){
+            signinStatus = true;
             //Name.setVisibility(View.VISIBLE);
             SignIn.setVisibility(View.GONE);
             SignOut.setVisibility(View.VISIBLE);
@@ -188,10 +211,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //});
         }
         else{
+            signinStatus = false;
             //Name.setVisibility(View.GONE);
             SignIn.setVisibility(View.VISIBLE);
             SignOut.setVisibility(View.GONE);
-            GotoviewAll.setVisibility(View.VISIBLE);
+            GotoviewAll.setVisibility(View.GONE);
 
             loginButton.setVisibility(View.VISIBLE);
             //mVideoView = (VideoView)findViewById(R.id.bgvideoview);
@@ -217,6 +241,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.bn_logout:
+                new PreferenceManager(this).clearPreference();
                 signOut();
                 break;
         }

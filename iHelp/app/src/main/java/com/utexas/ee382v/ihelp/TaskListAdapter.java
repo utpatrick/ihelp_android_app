@@ -57,12 +57,12 @@ public class TaskListAdapter extends ArrayAdapter<TaskCard>{
         holder.titleView.setText(item.getTitle());
         holder.contentView.setText(item.getContent());
         if (item.getTitle() != null) holder.titleView.setTag(item.getTitle());
-        holder.imageView.setTag(item.getIconUrl());
-        String link = item.getIconUrl();
+        holder.imageView.setTag(item.getOwnerEmail());
+        String link = MainActivity.getEndpoint() + "/android/getIcon/?owner_email=" + item.getOwnerEmail();
         if (link == null || link.length() < 1 || link.startsWith("/static/images/")) {
             Picasso.with(mContext).load(R.drawable.active_dots).into(holder.imageView);
         } else {
-            Picasso.with(mContext).load(item.getIconUrl()).into(holder.imageView);
+            Picasso.with(mContext).load(link).into(holder.imageView);
         }
         return view;
     }
