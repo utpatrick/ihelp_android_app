@@ -5,7 +5,8 @@ class User(ndb.Model):
     user_email = ndb.StringProperty()
     user_name = ndb.StringProperty()
     display_name = ndb.StringProperty()
-    ratings = ndb.IntegerProperty(repeated=True)
+    rating = ndb.IntegerProperty()
+    ratings_all = ndb.IntegerProperty(repeated=True)
     credit = ndb.IntegerProperty()
     profile_image = ndb.BlobProperty()
 
@@ -29,7 +30,7 @@ class Task(ndb.Model):
 
     expiration_time = ndb.DateTimeProperty(auto_now=True)
     credit = ndb.IntegerProperty()
-    status = ndb.StringProperty(choices=['drafting', 'posted', 'completed', 'pending', 'deleted'])
+    status = ndb.StringProperty(choices=['Drafting', 'Posted', 'Completed', 'Ongoing', 'Deleted'])
 
 
 def post_a_task(task_title, task_category, task_type, task_detail,
@@ -47,7 +48,7 @@ def get_all_tasks():
     return all_tasks
 
 
-def get_tasks_by_status(status='posted'):
+def get_tasks_by_status(status='Posted'):
     filter_tasks = Task.query(Task.status == status)
     return filter_tasks
 
@@ -62,6 +63,11 @@ def get_tasks_by_type(task_type):
     return filter_task.fetch()
 
 
+def get_tasks_by_email(owner_email):
+    filter_tasks = Task.query(Task.owner_email == owner_email)
+    return filter_tasks
+
+
 def get_icon(owner_email):
     user = get_user_by_email(owner_email)
     if user:
@@ -73,10 +79,15 @@ def get_task(owner_email, task_title):
     return filter_tasks.get()
 
 
+def get_task_by_id(task_id):
+    filter_task = Task.get_by_id(int(task_id))
+    return filter_task
+
+
 def get_name_by_email(user_email):
-    user = get_user(user_email)
+    user = get_user_by_email(user_email)
     if user:
-        return user.user_name
+        return user.display_name
 
 
 def add_user(user_email, user_name):
@@ -85,13 +96,23 @@ def add_user(user_email, user_name):
         user = User(user_name=user_name, user_email=user_email)
 
 
+def delete_task(owner_email, task_id):
+    task = get_task_by_id(task_id)
+    if task.owner_email == owner_email:
+        task.status = "Deleted"
+        task.put()
+        return 0
+    else:
+        return 1
+
+
 def update_task(owner_email, task_title, requestee, status):
     task = get_task(owner_email, task_title)
     if task:
         if status == 'Posted':
-            task.status = 'pending'
+            task.status = 'Ongoing'
         elif status == 'Pending':
-            task.status = 'completed'
+            task.status = 'Completed'
 
         if task.type == 'provide_help':
             task.helpee = requestee
@@ -112,7 +133,7 @@ def create_user(user_email, user_name, profile_image):
     else:
         new_user = User(user_email=user_email, user_name=user_name,
                         display_name=user_name, profile_image=profile_image,
-                        credit=50, ratings=[5])
+                        credit=50, rating=5, ratings_all=[5])
         new_user.put()
         return 0
 

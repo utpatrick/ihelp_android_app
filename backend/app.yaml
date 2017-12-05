@@ -23,6 +23,9 @@ handlers:
 - url: /android/get_all_task
   script: app.ihelp_handlers.app
 
+- url: /android/manage_task
+  script: app.ihelp_handlers.app
+
 - url: /android/i_can_help
   script: app.ihelp_handlers.app
 
@@ -39,6 +42,9 @@ handlers:
   script: app.ihelp_handlers.app
 
 - url: /android/upload_image_url
+  script: app.ihelp_handlers.app
+
+- url: /android/delete_task
   script: app.ihelp_handlers.app
 
 - url: /android/image
