@@ -1,10 +1,15 @@
 package com.utexas.ee382v.ihelp;
 
-import android.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,119 +17,60 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.system.ErrnoException;
-import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.android.volley.NetworkResponse;
-import com.android.volley.NoConnectionError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class EditProfile extends AppCompatActivity {
-
-    Bitmap selectedImage = null;
-    Bitmap bitmap;
-    String filename;
+public class CropImage extends AppCompatActivity {
 
     private final static int REQUEST_PERMISSION_REQ_CODE = 34;
-    private final static int CAMERA_CODE = 101, GALLERY_CODE = 201, CROPING_CODE = 301;
+    private static final int CAMERA_CODE = 101, GALLERY_CODE = 201, CROPING_CODE = 301;
 
-    private ImageButton profile_img_btn;
-    private Button discard_btn;
-    private Button save_btn;
+    private Button btn_select_image;
+    private ImageView imageView;
     private Uri mImageCaptureUri;
     private File outPutFile = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_profile);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        setContentView(R.layout.activity_edit_profile);
+        setContentView(R.layout.activity_crop_image);
 
         outPutFile = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
-        profile_img_btn = (ImageButton) findViewById(R.id.profileButton);
-        profile_img_btn.setOnClickListener(new View.OnClickListener() {
+        btn_select_image = (Button) findViewById(R.id.btn_select_image);
+        imageView = (ImageView) findViewById(R.id.img_photo);
+
+        btn_select_image.setOnClickListener(new OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 selectImageOption();
             }
         });
-        discard_btn = (Button) findViewById(R.id.discard_changes);
-        discard_btn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-            }
-        });
-        save_btn = (Button) findViewById(R.id.save_changes);
-        save_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateProfileImage();
-                finish();
-            }
-        });
-
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 
     private void selectImageOption() {
-        final CharSequence[] items = { "Use Camera", "Choose from Gallery", "Cancel" };
+        final CharSequence[] items = { "Capture Photo", "Choose from Gallery", "Cancel" };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Update Profile Photo!");
+        AlertDialog.Builder builder = new AlertDialog.Builder(CropImage.this);
+        builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
 
-                if (items[item].equals("Use Camera")) {
+                if (items[item].equals("Capture Photo")) {
 
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
@@ -146,6 +92,15 @@ public class EditProfile extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (ContextCompat.checkSelfPermission(CropImage.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_REQ_CODE);
+            return;
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(final int requestCode, final @NonNull String[] permissions, final @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSION_REQ_CODE: {
@@ -164,7 +119,7 @@ public class EditProfile extends AppCompatActivity {
 
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == GALLERY_CODE && resultCode == Activity.RESULT_OK && null != data) {
+        if (requestCode == GALLERY_CODE && resultCode == RESULT_OK && null != data) {
 
             mImageCaptureUri = data.getData();
             System.out.println("Gallery Image URI : "+mImageCaptureUri);
@@ -179,10 +134,10 @@ public class EditProfile extends AppCompatActivity {
             try {
                 if(outPutFile.exists()){
                     Bitmap photo = decodeFile(outPutFile);
-                    profile_img_btn.setImageBitmap(photo);
+                    imageView.setImageBitmap(photo);
                 }
                 else {
-                    Toast.makeText(getApplicationContext(), "Error while saving image", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Error while save image", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -200,7 +155,7 @@ public class EditProfile extends AppCompatActivity {
         List<ResolveInfo> list = getPackageManager().queryIntentActivities( intent, 0 );
         int size = list.size();
         if (size == 0) {
-            Toast.makeText(this, "Can't find image cropping app", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Cann't find image croping app", Toast.LENGTH_SHORT).show();
             return;
         } else {
             intent.setData(mImageCaptureUri);
@@ -237,7 +192,7 @@ public class EditProfile extends AppCompatActivity {
                 CropingOptionAdapter adapter = new CropingOptionAdapter(getApplicationContext(), cropOptions);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Choose Cropping App");
+                builder.setTitle("Choose Croping App");
                 builder.setCancelable(false);
                 builder.setAdapter( adapter, new DialogInterface.OnClickListener() {
                     public void onClick( DialogInterface dialog, int item ) {
@@ -289,71 +244,4 @@ public class EditProfile extends AppCompatActivity {
         }
         return null;
     }
-
-    private String updateProfileImage(){
-        final String request_url = MainActivity.getEndpoint() + "/android/update_profile";
-
-        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, request_url, new Response.Listener<NetworkResponse>() {
-            @Override
-            public void onResponse(NetworkResponse response) {
-                String resultResponse = new String(response.data);
-                try {
-                    JSONObject result = new JSONObject(resultResponse);
-                    String status = result.getString("status");
-                    Log.d("create_status", status);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                NetworkResponse networkResponse = error.networkResponse;
-                String errorMessage = "Unknown error";
-                if (networkResponse == null) {
-                    if (error.getClass().equals(TimeoutError.class)) {
-                        errorMessage = "Request timeout";
-                    } else if (error.getClass().equals(NoConnectionError.class)) {
-                        errorMessage = "Failed to connect server";
-                    }
-                } else {
-                    String result = new String(networkResponse.data);
-                    try {
-                        JSONObject response = new JSONObject(result);
-                        String status = response.getString("status");
-                        String message = response.getString("message");
-
-                        Log.e("Error Status", status);
-                        Log.e("Error Message", message);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                Log.i("Error", errorMessage);
-                error.printStackTrace();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("user_email", MainActivity.getUserEmail());
-                params.put("display_name", "");
-                return params;
-            }
-
-            @Override
-            protected Map<String, DataPart> getByteData() {
-                Map<String, DataPart> params = new HashMap<>();
-                // file name could found file base or direct access from real path
-                // for now just get bitmap data from ImageView
-                params.put("profile_image", new DataPart("updated_profile", AppHelper.getFileDataFromDrawable(getBaseContext(), profile_img_btn.getDrawable()), "image/jpeg"));
-                return params;
-            }
-        };
-
-        VolleySingleton.getInstance(this.getApplicationContext()).addToRequestQueue(multipartRequest);
-
-        return "";
-    }
-
 }

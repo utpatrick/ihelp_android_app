@@ -52,4 +52,5 @@
     <string name="ongoing">Ongoing</string>
     <string name="pending">Pending</string>
     <string name="title_activity_edit_profile">EditProfile</string>
+    <string name="title_activity_crop_image">CropImage</string>
 </resources>
