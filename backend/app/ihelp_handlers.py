@@ -89,7 +89,7 @@ class ICanHelp(webapp2.RequestHandler):
         for task in sorted_task:
             owner = task.owner_email
             profile_image = model.get_icon(owner)
-            if (not category or task.category == category) and task.status != 'completed':
+            if (not category or task.category == category) and task.status == 'posted':
                 response_content.append({'task_title': task.title,
                                          'task_detail': task.description,
                                          'task_owner': task.owner_email,
@@ -107,7 +107,7 @@ class INeedHelp(webapp2.RequestHandler):
         for task in sorted_task:
             owner = task.owner_email
             profile_image = model.get_icon(owner)
-            if (not category or task.category == category) and task.status != 'completed':
+            if (not category or task.category == category) and task.status == 'posted':
                 response_content.append({'task_title': task.title,
                                          'task_detail': task.description,
                                          'task_owner': task.owner_email,
