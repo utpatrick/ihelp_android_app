@@ -34,6 +34,7 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener{
 
+    private static final String TAG = "ERROR";
     private Button SignOut;
     private SignInButton SignIn;
     private GoogleApiClient googleApiClient;
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int REQ_CODE = 9001;
     static String name;
     static String email;
+    static String gname;
+    static String gmail;
     private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com/";
 
 
@@ -67,15 +70,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject object, GraphResponse response) {
+                        if (response.getError() != null) {
+                            // handle error
+                        } else {
+                            email = object.optString("email");
+                            name = object.optString("name");
+                            //String birthday = me.optString("user_birthday");
+
+                            System.out.println(email);
+                            System.out.println(name);
+                            System.out.println(gmail);
+                            System.out.println(gname);
+                            //System.out.println(birthday);
+                        }
                         updateUI(true);
+
 
 
                     }
                 });
+                //email = jsonObject.getString("email");
                 Bundle parameters = new Bundle();
-                parameters.putString("fields","first_name, last_name, email, id");
+                parameters.putString("fields","name, email, id");
                 graphRequest.setParameters(parameters);
                 graphRequest.executeAsync();
+                //email = .getString()
 
             }
 
@@ -112,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void signIn(){
         Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        //System.out.print(name);
+        //System.out.print(email);
         startActivityForResult(intent, REQ_CODE);
     }
 
@@ -130,8 +151,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             GoogleSignInAccount account = result.getSignInAccount();
             Log.d("login", "login: " + String.valueOf(account == null));
             if (account != null) {
-                this.name = account.getDisplayName();
-                this.email = account.getEmail();
+                this.gname = account.getDisplayName();
+                this.gmail = account.getEmail();
+                //System.out.print(gname);
+                //System.out.print(email);
                 updateUI(true);
             }
             Intent intent = new Intent(this, ViewAll.class);
