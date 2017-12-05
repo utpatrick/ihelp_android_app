@@ -36,7 +36,6 @@ class PostATask(webapp2.RequestHandler):
                                         task_location, desitination_location, task_status,
                                         task_onwer, extra_credit)
         if post_status == 0:
-
             response_content = {'status': 'ok',}
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
@@ -54,30 +53,49 @@ class GetAllTasks(webapp2.RequestHandler):
         self.response.out.write(json.dumps(response_content))
 
 
-class UpdateProfile(blobstore_handlers.BlobstoreUploadHandler):
+class CreateUser(webapp2.RequestHandler):
     def post(self):
-        stream_name = self.request.get('stream')
         user_email = self.request.get('user_email')
-        user_id = model.user_email_to_user_id(user_email)
-        title = self.request.get('title')
-        content = self.get_uploads()[0]
-        lat = self.request.get('lat')
-        long = self.request.get('long')
-        tags = self.request.get('tags')
-        geo_info = ndb.GeoPt(float(lat), float(long))
-        model.add_photo_geo(user_id, stream_name, title, content.key(), geo_info, tags)
-        if content:
-            response_content = {'status': 'ok',
-                                'lat': lat,
-                                'longG': long}
+        user_name = self.request.get('user_name')
+        profile_image = self.request.get('profile_image')
+        create_status = model.create_user(user_email, user_name, profile_image)
+        if create_status == 0:
+            response_content = {'status': 'ok'}
+        elif create_status == 1:
+            response_content = {'status': 'existed'}
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps(response_content))
+
+
+class UpdateProfile(webapp2.RequestHandler):
+    def post(self):
+        user_email = self.request.get('user_email')
+        display_name = self.request.get('display_name')
+        profile_image = self.request.get('profile_image')
+        update_status = model.update_profile(user_email, display_name, profile_image)
+        if update_status == 0:
+            response_content = {'status': 'ok'}
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
     def get(self):
-        upload_url = blobstore.create_upload_url('/android/upload_image')
+        user_email = self.request.get('user_email')
+        user = model.get_user_by_email(user_email)
         self.response.headers['Content-Type'] = 'application/json'
-        response_content = {'uploadURL': upload_url}
+        response_content = {'display_name': user.display_name,
+                            'credit': user.credit, 'rating': user.ratings}
         self.response.out.write(json.dumps(response_content))
+
+
+class ProfileImage(webapp2.RequestHandler):
+    def get(self):
+        user_email = self.request.get('user_email')
+        user = model.get_user_by_email(user_email)
+        if user:
+            self.response.headers['Content-Type'] = 'image/png'
+            self.response.out.write(user.profile_image)
+        else:
+            self.response.out.write('No image')
 
 
 class ICanHelp(webapp2.RequestHandler):
@@ -153,15 +171,18 @@ class ChangeStatus(webapp2.RequestHandler):
         status = self.request.get('status')
         model.update_task(owner, task_title, requestee, status)
 
+
 # [START app]
 app = webapp2.WSGIApplication([
     ('/android/post_a_task', PostATask),
     ('/android/get_all_task', GetAllTasks),
+    ('/android/create_user', CreateUser),
     ('/android/update_profile', UpdateProfile),
     ('/android/get_icon', GetIcon),
     ('/android/i_can_help', ICanHelp),
     ('/android/i_need_help', INeedHelp),
     ('/android/view_task', ViewTask),
-    ('/android/change_status', ChangeStatus)
+    ('/android/change_status', ChangeStatus),
+    ('/android/profile_image', ProfileImage)
 ], debug=True)
 # [END app]

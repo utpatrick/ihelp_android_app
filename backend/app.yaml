@@ -14,6 +14,9 @@ handlers:
 - url: /android/post_a_task
   script: app.ihelp_handlers.app
 
+- url: /android/create_user
+  script: app.ihelp_handlers.app
+
 - url: /android/update_profile
   script: app.ihelp_handlers.app
 
@@ -33,6 +36,12 @@ handlers:
   script: app.ihelp_handlers.app
 
 - url: /android/get_icon
+  script: app.ihelp_handlers.app
+
+- url: /android/upload_image_url
+  script: app.ihelp_handlers.app
+
+- url: /android/image
   script: app.ihelp_handlers.app
 
 - url: .*

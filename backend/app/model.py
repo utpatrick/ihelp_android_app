@@ -4,6 +4,7 @@ from google.appengine.ext import ndb
 class User(ndb.Model):
     user_email = ndb.StringProperty()
     user_name = ndb.StringProperty()
+    display_name = ndb.StringProperty()
     ratings = ndb.IntegerProperty(repeated=True)
     credit = ndb.IntegerProperty()
     profile_image = ndb.BlobProperty()
@@ -13,7 +14,7 @@ class Task(ndb.Model):
     owner_email = ndb.StringProperty()
     helper = ndb.StringProperty()
     #helpee is the one who is helped by helper
-    helpee = ndb.StringProperty
+    helpee = ndb.StringProperty()
 
     title = ndb.StringProperty()
     description = ndb.StringProperty()
@@ -62,7 +63,7 @@ def get_tasks_by_type(task_type):
 
 
 def get_icon(owner_email):
-    user = get_user(owner_email)
+    user = get_user_by_email(owner_email)
     if user:
         return user.profile_image
 
@@ -96,6 +97,30 @@ def update_task(owner_email, task_title, requestee, status):
             task.helpee = requestee
         elif task.type == 'need_help':
             task.helper = requestee
-
         task.put()
+
+
+def get_user_by_email(user_email):
+    user = User.query(User.user_email == user_email)
+    return user.get()
+
+
+def create_user(user_email, user_name, profile_image):
+    check_existing = get_user_by_email(user_email)
+    if check_existing:
+        return 1
+    else:
+        new_user = User(user_email=user_email, user_name=user_name,
+                        display_name=user_name, profile_image=profile_image,
+                        credit=50, ratings=[5])
+        new_user.put()
+        return 0
+
+
+def update_profile(user_email, display_name, profile_image):
+    user = get_user_by_email(user_email)
+    user.display_name = display_name
+    user.profile_image = profile_image
+    user.put()
+    return 0
 
