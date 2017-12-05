@@ -131,6 +131,7 @@ public class ViewTask extends AppCompatActivity {
             public void onResponse(String response) {
                 Intent intent = new Intent(getApplicationContext(), ViewAll.class);
                 startActivity(intent);
+                finish();
             }
         }, new Response.ErrorListener() {
             @Override

@@ -3,6 +3,7 @@ package com.utexas.ee382v.ihelp;
 import android.content.Intent;
 import android.app.Activity;
 import android.graphics.Color;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
@@ -90,7 +91,7 @@ public class ViewAll extends AppCompatActivity {
 
 
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager(final ViewPager viewPager) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new INeedHelp());
         adapter.addFragment(new ICanHelp());
@@ -106,6 +107,16 @@ public class ViewAll extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 bottomNavigation.setCurrentItem(position);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                switch (position){
+                    case 0:
+                        transaction.replace(R.id.ineed_help_fragment, new INeedHelp());
+                        break;
+                    case 1:
+                        transaction.replace(R.id.ican_help_fragment, new ICanHelp());
+                        break;
+                }
+                transaction.commit();
             }
 
             @Override
