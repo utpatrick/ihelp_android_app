@@ -36,19 +36,46 @@ class PostATask(webapp2.RequestHandler):
                                         task_location, desitination_location, task_status,
                                         task_onwer, extra_credit)
         if post_status == 0:
-            response_content = {'status': 'ok',}
+
+            response_content = {'status': 'ok'}
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
 
 class GetAllTasks(webapp2.RequestHandler):
     def get(self):
+        owner_email = self.request.get('owner_email')
         all_tasks = model.get_tasks_by_status()
         sorted_task = sorted(all_tasks, key=lambda x: x.last_update, reverse=True)
-        response_content = [{'task_title': s.title, 'task_category': s.category, 'task_type': s.type,
-                             'task_detail': s.description, 'task_location': s.task_location,
-                             'desitination_location': s.final_dest, 'task_status': s.status,
-                             'task_onwer': s.owner_email, 'extra_credit': s.credit} for s in sorted_task]
+        response_content = [{'task_title': s.title,
+                             'task_category': s.category,
+                             'task_type': s.type,
+                             'task_detail': s.description,
+                             'task_location': s.task_location,
+                             'desitination_location': s.final_dest,
+                             'task_status': s.status,
+                             'task_onwer': s.owner_email,
+                             'extra_credit': s.credit,
+                             'task_id': s.key.id()} for s in sorted_task]
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps(response_content))
+
+
+class ManageTasks(webapp2.RequestHandler):
+    def get(self):
+        owner_email = self.request.get('owner_email')
+        task_status = self.request.get('task_status')
+        all_tasks = model.get_tasks_by_email(owner_email)
+        sorted_task = sorted(all_tasks, key=lambda x: x.last_update, reverse=True)
+        response_content = []
+        for task in sorted_task:
+            owner = task.owner_email
+            if (not task_status or task.status == task_status) and task.status != 'Deleted':
+                response_content.append({'task_title': task.title,
+                                         'task_detail': task.description,
+                                         'task_owner': task.owner_email,
+                                         'task_status': task.status,
+                                         'task_id': task.key.id()})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
@@ -83,7 +110,7 @@ class UpdateProfile(webapp2.RequestHandler):
         user = model.get_user_by_email(user_email)
         self.response.headers['Content-Type'] = 'application/json'
         response_content = {'display_name': user.display_name,
-                            'credit': user.credit, 'rating': user.ratings}
+                            'credit': user.credit, 'rating': user.rating}
         self.response.out.write(json.dumps(response_content))
 
 
@@ -106,12 +133,11 @@ class ICanHelp(webapp2.RequestHandler):
         response_content = []
         for task in sorted_task:
             owner = task.owner_email
-            profile_image = model.get_icon(owner)
-            if (not category or task.category == category) and task.status != 'completed':
+            if (not category or task.category == category) and task.status == 'Posted':
                 response_content.append({'task_title': task.title,
                                          'task_detail': task.description,
                                          'task_owner': task.owner_email,
-                                         'icon': profile_image})
+                                         'task_id': task.key.id()})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
@@ -124,12 +150,11 @@ class INeedHelp(webapp2.RequestHandler):
         response_content = []
         for task in sorted_task:
             owner = task.owner_email
-            profile_image = model.get_icon(owner)
-            if (not category or task.category == category) and task.status != 'completed':
+            if (not category or task.category == category) and task.status == ('Posted' or 'Ongoing'):
                 response_content.append({'task_title': task.title,
                                          'task_detail': task.description,
                                          'task_owner': task.owner_email,
-                                         'icon': profile_image})
+                                         'task_id': task.key.id()})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
@@ -139,7 +164,7 @@ class ViewTask(webapp2.RequestHandler):
         owner_email = self.request.get('task_owner')
         task_title = self.request.get('task_title')
         task = model.get_task(owner_email, task_title)
-        owner_name = model.get_name_by_email(owner_email)
+        owner_display_name = model.get_name_by_email(owner_email)
         if task:
             response_content = {'task_title': task.title,
                                 'task_category': task.category,
@@ -149,8 +174,9 @@ class ViewTask(webapp2.RequestHandler):
                                 'destination': task.final_dest,
                                 'task_status': task.status,
                                 'task_owner': task.owner_email,
-                                'owner_name': owner_name,
-                                'extra_credit': task.credit}
+                                'owner_name': owner_display_name,
+                                'extra_credit': task.credit,
+                                'task_id': task.key.id()}
             self.response.headers['Content-Type'] = 'application/json'
             self.response.out.write(json.dumps(response_content))
 
@@ -161,6 +187,27 @@ class GetIcon(webapp2.RequestHandler):
         if owner_email:
             icon = model.get_icon(owner_email)
             self.response.out.write(icon)
+
+
+class DeleteTask(webapp2.RequestHandler):
+    def post(self):
+        task_id = self.request.get('task_id')
+        owner_email = self.request.get('owner_email')
+        post_status = model.delete_task(owner_email, task_id)
+        if post_status == 0:
+            response_content = {'status': 'ok'}
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps(response_content))
+
+    def get(self):
+        task_id = self.request.get('task_id')
+        task = model.get_task_by_id(task_id)
+        if task:
+            response_content = {'status': 'ok'}
+        else:
+            response_content = {'status': 'no'}
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps(response_content))
 
 
 class ChangeStatus(webapp2.RequestHandler):
@@ -176,6 +223,7 @@ class ChangeStatus(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
     ('/android/post_a_task', PostATask),
     ('/android/get_all_task', GetAllTasks),
+    ('/android/manage_task', ManageTasks),
     ('/android/create_user', CreateUser),
     ('/android/update_profile', UpdateProfile),
     ('/android/get_icon', GetIcon),
@@ -183,6 +231,8 @@ app = webapp2.WSGIApplication([
     ('/android/i_need_help', INeedHelp),
     ('/android/view_task', ViewTask),
     ('/android/change_status', ChangeStatus),
-    ('/android/profile_image', ProfileImage)
+    ('/android/profile_image', ProfileImage),
+    ('/android/change_status', ChangeStatus),
+    ('/android/delete_task', DeleteTask)
 ], debug=True)
 # [END app]
