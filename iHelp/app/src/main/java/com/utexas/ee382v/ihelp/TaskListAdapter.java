@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ public class TaskListAdapter extends ArrayAdapter<TaskCard>{
 
     static class ViewHolder {
         TextView titleView;
+        TextView idView;
         TextView contentView;
         ImageView imageView;
     }
@@ -47,6 +49,7 @@ public class TaskListAdapter extends ArrayAdapter<TaskCard>{
             view = inflater.inflate(resource,parent,false);
             holder = new ViewHolder();
             holder.titleView = (TextView) view.findViewById(R.id.task_card_title);
+            holder.idView = (TextView) view.findViewById(R.id.task_card_id);
             holder.contentView = (TextView) view.findViewById(R.id.task_card_content);
             holder.imageView = (ImageView) view.findViewById(R.id.task_card_image);
             view.setTag(holder);
@@ -55,14 +58,18 @@ public class TaskListAdapter extends ArrayAdapter<TaskCard>{
         }
         TaskCard item = items.get(position);
         holder.titleView.setText(item.getTitle());
+        holder.idView.setText(item.getTaskID());
+        Log.d("task_id_when_creating", item.getTaskID());
         holder.contentView.setText(item.getContent());
         if (item.getTitle() != null) holder.titleView.setTag(item.getTitle());
         holder.imageView.setTag(item.getOwnerEmail());
-        String link = MainActivity.getEndpoint() + "/android/getIcon/?owner_email=" + item.getOwnerEmail();
+        String link = MainActivity.getEndpoint() + "/android/profile_image?user_email=" + item.getOwnerEmail();
+        Log.d("image_link", link);
         if (link == null || link.length() < 1 || link.startsWith("/static/images/")) {
             Picasso.with(mContext).load(R.drawable.active_dots).into(holder.imageView);
         } else {
-            Picasso.with(mContext).load(link).into(holder.imageView);
+            Log.d("image_plotted", "successful!");
+            Picasso.with(mContext).load(link).fit().into(holder.imageView);
         }
         return view;
     }

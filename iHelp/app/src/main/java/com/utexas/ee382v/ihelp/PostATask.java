@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by kyle on 11/17/17.
+ * Created by Patrick and Xiaocheng on 11/17/17.
  */
 
 public class PostATask extends Fragment implements View.OnClickListener{
@@ -155,8 +155,8 @@ public class PostATask extends Fragment implements View.OnClickListener{
         if (view.getId() == R.id.save_draft || view.getId() == R.id.post_now) {
 
             Log.d("uploading", "uploading......");
-            if(view.getId() == R.id.save_draft) task_status = "drafting";
-            if(view.getId() == R.id.post_now) task_status = "posted";
+            if(view.getId() == R.id.save_draft) task_status = "Drafting";
+            if(view.getId() == R.id.post_now) task_status = "Posted";
 
             progressDialog = new ProgressDialog(getActivity());
             progressDialog.setMessage("Posting, please wait...");

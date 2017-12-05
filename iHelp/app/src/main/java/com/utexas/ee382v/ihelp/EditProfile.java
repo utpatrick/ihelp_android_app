@@ -25,9 +25,13 @@ import android.support.v7.widget.Toolbar;
 import android.system.ErrnoException;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
@@ -36,11 +40,17 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,6 +72,10 @@ public class EditProfile extends AppCompatActivity {
     private final static int CAMERA_CODE = 101, GALLERY_CODE = 201, CROPING_CODE = 301;
 
     private ImageButton profile_img_btn;
+    private EditText display_name;
+    private TextView rating_input;
+    private TextView credit_input;
+    private TextView user_email_input;
     private Button discard_btn;
     private Button save_btn;
     private Uri mImageCaptureUri;
@@ -78,11 +92,15 @@ public class EditProfile extends AppCompatActivity {
 
         setContentView(R.layout.activity_edit_profile);
 
+        getProfile();
+
         outPutFile = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
         profile_img_btn = (ImageButton) findViewById(R.id.profileButton);
+        final String image_url = MainActivity.getEndpoint() + "/android/profile_image?user_email=" + MainActivity.getUserEmail();
+        Picasso.with(this).load(image_url).fit().into(profile_img_btn);
         profile_img_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -337,7 +355,7 @@ public class EditProfile extends AppCompatActivity {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("user_email", MainActivity.getUserEmail());
-                params.put("display_name", "");
+                params.put("display_name", display_name.getText().toString());
                 return params;
             }
 
@@ -356,4 +374,30 @@ public class EditProfile extends AppCompatActivity {
         return "";
     }
 
+    private void getProfile() {
+        final String profile_url = MainActivity.getEndpoint() + "/android/update_profile?user_email=" + MainActivity.getUserEmail();
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, profile_url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    display_name = (EditText) findViewById(R.id.displayNameInput);
+                    display_name.setText(response.get("display_name").toString());
+                    credit_input = (TextView) findViewById(R.id.creditInput);
+                    credit_input.setText(response.getString("credit"));
+                    rating_input = (TextView) findViewById(R.id.ratingInput);
+                    rating_input.setText(response.getString("rating"));
+                    user_email_input = (TextView) findViewById(R.id.userEmailInput);
+                    user_email_input.setText(MainActivity.getUserEmail());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        Volley.newRequestQueue(this).add(jsonRequest);
+    }
 }
