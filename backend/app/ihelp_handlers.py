@@ -117,24 +117,6 @@ class ICanHelp(webapp2.RequestHandler):
         self.response.out.write(json.dumps(response_content))
 
 
-class ICanHelp(webapp2.RequestHandler):
-    def get(self):
-        category = self.request.get('category')
-        tasks = model.get_tasks_by_type('seek_help')
-        sorted_task = sorted(tasks, key=lambda x: x.last_update, reverse=True)
-        response_content = []
-        for task in sorted_task:
-            owner = task.owner_email
-            profile_image = model.get_icon(owner)
-            if (not category or task.category == category) and task.status != 'completed':
-                response_content.append({'task_title': task.title,
-                                         'task_detail': task.description,
-                                         'task_owner': task.owner_email,
-                                         'icon': profile_image})
-        self.response.headers['Content-Type'] = 'application/json'
-        self.response.out.write(json.dumps(response_content))
-
-
 class INeedHelp(webapp2.RequestHandler):
     def get(self):
         category = self.request.get('category')
