@@ -12,8 +12,19 @@
     <string name="foot">Food</string>
     <string name="drink">Drink</string>
     <string name="ride">Ride</string>
+    <string name="action">Action</string>
+    <string name="place_holder">Place Holder</string>
     <string name="facebook_app_id">413817815701668</string>
     <string name="fb_login_protocol_scheme">fb413817815701668</string>
+    <string name="provide_help">Provide Help</string>
+    <string name="get_help">Get Help!</string>
+    <string name="need_help">Need Help</string>
+    <string name="completed">Completed!</string>
+    <string name="complete">Complete</string>
+    <string name="no_activity">No Action Available</string>
+    <string name="drafting">Drafting</string>
+    <string name="posted">Posted</string>
+    <string name="status">Status:</string>
 
     <string-array name="task_names">
         <item>Food</item>
@@ -21,8 +32,6 @@
         <item>Drive</item>
         <item>Other</item>
     </string-array>
-
-
 
     <!-- Slide_1 info -->
     <string name="slide_1_title">Food</string>
@@ -43,6 +52,4 @@
     <string name="ongoing">Ongoing</string>
     <string name="pending">Pending</string>
     <string name="title_activity_edit_profile">EditProfile</string>
-
-
 </resources>

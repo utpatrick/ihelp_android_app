@@ -13,12 +13,12 @@ class Task(ndb.Model):
     owner_email = ndb.StringProperty()
     helper = ndb.StringProperty()
     #helpee is the one who is helped by helper
-    helpee = ndb.StringProperty(repeated=True)
+    helpee = ndb.StringProperty
 
     title = ndb.StringProperty()
     description = ndb.StringProperty()
-    type = ndb.StringProperty(choices=('provide_help', 'seek_help'))
-    category = ndb.StringProperty(choices=('Food', 'Drink', 'Ride', 'Delivery', 'Study', 'Other'))
+    type = ndb.StringProperty(choices=['provide_help', 'seek_help'])
+    category = ndb.StringProperty(choices=['Food', 'Drink', 'Ride', 'Delivery', 'Study', 'Other'])
 
     task_location = ndb.StringProperty()
     final_dest = ndb.StringProperty()
@@ -28,7 +28,7 @@ class Task(ndb.Model):
 
     expiration_time = ndb.DateTimeProperty(auto_now=True)
     credit = ndb.IntegerProperty()
-    status = ndb.StringProperty(choices=('drafting', 'posted', 'completed', 'inactive'))
+    status = ndb.StringProperty(choices=['drafting', 'posted', 'completed', 'pending'])
 
 
 def post_a_task(task_title, task_category, task_type, task_detail,
@@ -49,3 +49,53 @@ def get_all_tasks():
 def get_tasks_by_status(status='posted'):
     filter_tasks = Task.query(Task.status == status)
     return filter_tasks
+
+
+def get_user(user_email):
+    user = User.query(User.user_email == user_email)
+    return user.fetch()
+
+
+def get_tasks_by_type(task_type):
+    filter_task = Task.query(Task.type == task_type)
+    return filter_task.fetch()
+
+
+def get_icon(owner_email):
+    user = get_user(owner_email)
+    if user:
+        return user.profile_image
+
+
+def get_task(owner_email, task_title):
+    filter_tasks = Task.query(Task.owner_email == owner_email, Task.title == task_title)
+    return filter_tasks.get()
+
+
+def get_name_by_email(user_email):
+    user = get_user(user_email)
+    if user:
+        return user.user_name
+
+
+def add_user(user_email, user_name):
+    user = get_user(user_email)
+    if not user:
+        user = User(user_name=user_name, user_email=user_email)
+
+
+def update_task(owner_email, task_title, requestee, status):
+    task = get_task(owner_email, task_title)
+    if task:
+        if status == 'Posted':
+            task.status = 'pending'
+        elif status == 'Pending':
+            task.status = 'completed'
+
+        if task.type == 'provide_help':
+            task.helpee = requestee
+        elif task.type == 'need_help':
+            task.helper = requestee
+
+        task.put()
+
