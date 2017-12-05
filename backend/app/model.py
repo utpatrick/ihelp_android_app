@@ -29,7 +29,7 @@ class Task(ndb.Model):
 
     expiration_time = ndb.DateTimeProperty(auto_now=True)
     credit = ndb.IntegerProperty()
-    status = ndb.StringProperty(choices=['drafting', 'posted', 'completed', 'pending'])
+    status = ndb.StringProperty(choices=['drafting', 'posted', 'completed', 'pending', 'deleted'])
 
 
 def post_a_task(task_title, task_category, task_type, task_detail,
