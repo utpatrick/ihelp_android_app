@@ -54,8 +54,8 @@ public class ViewAll extends AppCompatActivity {
         else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-        if(MainActivity.email == null && MainActivity.gmail == null) {
-            Intent intent = new Intent(this, MainActivity.class);
+        if(MainActivity.email == null && MainActivity.gmail == null){
+            Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
         }
         setContentView(R.layout.activity_view_all);
