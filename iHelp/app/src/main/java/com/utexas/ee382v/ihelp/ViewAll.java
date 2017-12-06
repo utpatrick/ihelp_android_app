@@ -3,6 +3,7 @@ package com.utexas.ee382v.ihelp;
 import android.content.Intent;
 import android.app.Activity;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
@@ -46,6 +48,16 @@ public class ViewAll extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(Build.VERSION.SDK_INT >= 19) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+        else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+        if(MainActivity.getUserEmail() == null){
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
+        }
         setContentView(R.layout.activity_view_all);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

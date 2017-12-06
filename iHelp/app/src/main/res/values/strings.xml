@@ -48,6 +48,10 @@
     <!-- Slide_4 info -->
     <string name="slide_4_title">More</string>
     <string name="slide_4_desc">Get anything from others or for others!</string>
+
+    <string name="my_preference">"com.utexas.ee382v.ihelp.MyPref"</string>
+    <string name="my_preference_key">"com.utexas.ee382v.ihelp.MyPrefKey"</string>
+
     <string name="finished">Finished</string>
     <string name="ongoing">Ongoing</string>
     <string name="pending">Pending</string>

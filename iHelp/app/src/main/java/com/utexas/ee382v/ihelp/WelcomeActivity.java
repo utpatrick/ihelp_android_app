@@ -28,6 +28,10 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(new PreferenceManager(this).checkPreference()) {
+            loadHome();
+        }
+
         if(Build.VERSION.SDK_INT >= 19) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
@@ -106,6 +110,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.bnSkip:
                 loadHome();
+                new PreferenceManager(this).writePreference();
                 break;
         }
 
@@ -116,6 +121,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         finish();
     }
 
+
+
     private void loadNextSlide() {
         int next_slide = mPager.getCurrentItem() + 1;
         if(next_slide < layouts.length) {
@@ -123,6 +130,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         }
         else {
             loadHome();
+            new PreferenceManager(this).writePreference();
+
         }
     }
 
