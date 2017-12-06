@@ -196,6 +196,7 @@ public class PostATask extends Fragment implements View.OnClickListener{
                                         dialog.dismiss();
                                     }
                                 });
+                        resetText();
                         alertDialog.show();
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -250,6 +251,21 @@ public class PostATask extends Fragment implements View.OnClickListener{
 
         }
     }
+
+    private void resetText() {
+        try{
+            ViewGroup rootView = (ViewGroup) getView();
+            for (int i = 0; i < rootView.getChildCount(); i++) {
+                View child = rootView.getChildAt(i);
+                if (child instanceof EditText) {
+                    ((EditText) child).setText("");
+                }
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
 
 
