@@ -90,8 +90,8 @@ public class ViewAll extends AppCompatActivity {
 
 
 
-    private void setupViewPager(ViewPager viewPager) {
-        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
+    private void setupViewPager(final ViewPager viewPager) {
+        final SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new INeedHelp());
         adapter.addFragment(new ICanHelp());
         adapter.addFragment(new PostATask());
@@ -106,6 +106,7 @@ public class ViewAll extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 bottomNavigation.setCurrentItem(position);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -162,6 +163,11 @@ public class ViewAll extends AppCompatActivity {
 
         public void addFragment(Fragment fragment) {
             mFragmentList.add(fragment);
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
         }
     }
 
