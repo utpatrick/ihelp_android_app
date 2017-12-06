@@ -44,10 +44,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private static final int REQ_CODE = 9001;
-    static String name;
-    static String email;
-    static String gname;
-    static String gmail;
+    private static String name;
+    private static String email;
+    private static String gname;
+    private static String gmail;
     private boolean signinStatus;
     private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com/";
 
@@ -96,10 +96,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             name = object.optString("name");
                             //String birthday = me.optString("user_birthday");
 
-                            System.out.println(email);
-                            System.out.println(name);
-                            System.out.println(gmail);
-                            System.out.println(gname);
+                            //System.out.println(email);
+                            //System.out.println(name);
+                            //System.out.println(gmail);
+                            //System.out.println(gname);
                             //System.out.println(birthday);
                         }
                         updateUI(true);
@@ -130,29 +130,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public static String getUserEmail(){
-        if (gmail == null && email != null) {
+        if(gmail != null){
+            return gmail;
+        }
+        else {
             return email;
         }
-        else if (gmail != null && email == null) {
-            return gmail;
-        }
-        else if (gmail != null && email != null) {
-            return gmail;
-        }
-        return null;
     }
 
     public static String getUserName() {
-        if (name == null && gname != null) {
+        if(gname != null) {
             return gname;
         }
-        else if (gname != null && name == null) {
+        else {
             return name;
         }
-        else if (gname != null && name != null) {
-            return gname;
-        }
-        return null;
     }
 
     private void signIn(){
