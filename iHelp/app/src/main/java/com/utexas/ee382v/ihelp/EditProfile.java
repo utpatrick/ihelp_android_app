@@ -62,7 +62,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EditProfile extends AppCompatActivity {
+public class EditProfile extends MainActivity {
 
     Bitmap selectedImage = null;
     Bitmap bitmap;
@@ -125,6 +125,14 @@ public class EditProfile extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onClick(View view){
+        Intent intent = new Intent(this,MainActivity.class);
+        new PreferenceManager(this).clearPreference();
+        signOut();
+        startActivity(intent);
     }
 
     @Override

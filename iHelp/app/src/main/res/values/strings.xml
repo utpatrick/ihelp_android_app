@@ -49,6 +49,8 @@
     <string name="posted">Posted</string>
     <string name="finished">Completed</string>
     <string name="status">Status:</string>
+    <string name="my_preference">"com.utexas.ee382v.ihelp.MyPref"</string>
+    <string name="my_preference_key">"com.utexas.ee382v.ihelp.MyPrefKey"</string>
     <string name="ongoing">Ongoing</string>
     <string name="title_activity_edit_profile">EditProfile</string>
     <string name="title_activity_crop_image">CropImage</string>

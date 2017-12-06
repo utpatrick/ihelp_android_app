@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/post_a_task_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,11 +15,9 @@
         android:layout_below="@+id/textView2"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:fontFamily="casual"
         android:text="Input Task Title :"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="18sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
@@ -31,11 +30,9 @@
         android:layout_marginTop="16dp"
         android:layout_toEndOf="@+id/name"
         android:layout_toRightOf="@+id/name"
-        android:fontFamily="casual"
         android:text="Select Task Type :"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="18sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
@@ -47,15 +44,15 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="500dp"
-        android:fontFamily="casual"
+        android:layout_marginTop="24dp"
         android:text="@string/post_a_task"
         android:textAlignment="center"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <EditText
@@ -66,10 +63,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:fontFamily="casual"
         android:hint="What's your task?"
         android:textSize="14sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView6"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
@@ -98,7 +93,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:checked="false"
-        android:fontFamily="casual"
         android:text="ToggleButton"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textOff="Need Help"
@@ -120,7 +114,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:fontFamily="casual"
         android:text="Need Help"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -138,7 +131,6 @@
         android:layout_marginTop="16dp"
         android:layout_toEndOf="@+id/toggleButton2"
         android:layout_toRightOf="@+id/toggleButton2"
-        android:fontFamily="casual"
         android:text="Give Help"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -185,10 +177,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:fontFamily="casual"
         android:hint="Input your task details here..."
         android:singleLine="false"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/give_help" />
@@ -201,11 +191,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
-        android:fontFamily="casual"
         android:hint="Destination"
         android:textAlignment="center"
         android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toEndOf="@+id/exchange"
@@ -218,11 +206,9 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:fontFamily="casual"
         android:hint="Task Location"
         android:textAlignment="center"
         android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/exchange"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/task_details" />
@@ -256,8 +242,8 @@
         style="@style/Widget.AppCompat.ImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="exchangeLocation"
         android:layout_marginTop="32dp"
+        android:onClick="exchangeLocation"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/task_details"

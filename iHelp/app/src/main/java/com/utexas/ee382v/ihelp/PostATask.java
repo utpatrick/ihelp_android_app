@@ -2,8 +2,11 @@ package com.utexas.ee382v.ihelp;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -103,7 +107,6 @@ public class PostATask extends Fragment implements View.OnClickListener{
                     GiveHelp.setVisibility(View.VISIBLE);
 
                 }
-
             }
         });
 
@@ -141,8 +144,6 @@ public class PostATask extends Fragment implements View.OnClickListener{
     }
 
     public String get_task_type(){
-        GiveHelp = getView().findViewById(R.id.imageGiveHelp);
-        NeedHelp = getView().findViewById(R.id.imageNeedHelp);
         if(GiveHelp.isShown()) return "provide_help";
         else if(NeedHelp.isShown()) return "seek_help";
         // not need to return this "not_selected"
@@ -180,10 +181,13 @@ public class PostATask extends Fragment implements View.OnClickListener{
                         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Go To View",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
+                                        ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.container);
+                                        if ("provide_help".equals(get_task_type())) {
+                                            viewPager.setCurrentItem(0, true);
+                                        } else if ("seek_help".equals(get_task_type())) {
+                                            viewPager.setCurrentItem(1, true);
+                                        }
                                         dialog.dismiss();
-                                        //Intent intent = new Intent(ViewAll.this, ViewOneStream.class);
-                                        //intent.putExtra(ViewAllStream.SELECTED_STREAM, streamName);
-                                        //startActivity(intent);
                                     }
                                 });
                         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Continue Uploading",
@@ -192,6 +196,7 @@ public class PostATask extends Fragment implements View.OnClickListener{
                                         dialog.dismiss();
                                     }
                                 });
+                        resetText();
                         alertDialog.show();
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -246,6 +251,21 @@ public class PostATask extends Fragment implements View.OnClickListener{
 
         }
     }
+
+    private void resetText() {
+        try{
+            ViewGroup rootView = (ViewGroup) getView();
+            for (int i = 0; i < rootView.getChildCount(); i++) {
+                View child = rootView.getChildAt(i);
+                if (child instanceof EditText) {
+                    ((EditText) child).setText("");
+                }
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
 
 
