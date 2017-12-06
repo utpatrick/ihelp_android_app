@@ -46,12 +46,11 @@ public class Manage extends Fragment {
 
     private final static int EDIT_PROFILE_CODE = 7635;
     private ImageButton edit_btn;
-    private String url;
+    private final static String url = MainActivity.getEndpoint()+ "/android/manage_task?owner_email=" + MainActivity.getUserEmail();;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.manage, container, false);
-        url = MainActivity.getEndpoint()+ "/android/manage_task?owner_email=" + MainActivity.getUserEmail();
         getAllTasks(url, view);
         setUpCheckBox(view);
 
@@ -102,7 +101,6 @@ public class Manage extends Fragment {
                     TaskListAdapter adapter = new TaskListAdapter(getActivity(), R.layout.task_card,items);
                     ListView lv = parent.findViewById(R.id.manage_listview);
                     lv.setAdapter(adapter);
-
                     lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                         @Override
                         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -226,13 +224,14 @@ public class Manage extends Fragment {
             @Override
             public void onClick(View v) {
                 CheckBox box = (CheckBox) v;
+                String new_url = url;
                 if (box.isChecked()) {
                     postedBox.setChecked(false);
                     ongoingBox.setChecked(false);
                     finishedBox.setChecked(false);
-                    url += "&task_status=Drafting";
+                    new_url += "&task_status=Drafting";
                 }
-                getAllTasks(url, view);
+                getAllTasks(new_url, view);
             }
         });
 
@@ -240,13 +239,14 @@ public class Manage extends Fragment {
             @Override
             public void onClick(View v) {
                 CheckBox box = (CheckBox) v;
+                String new_url = url;
                 if (box.isChecked()) {
                     draftingBox.setChecked(false);
                     ongoingBox.setChecked(false);
                     finishedBox.setChecked(false);
-                    url += "&task_status=Posted";
+                    new_url += "&task_status=Posted";
                 }
-                getAllTasks(url, view);
+                getAllTasks(new_url, view);
             }
         });
 
@@ -254,13 +254,14 @@ public class Manage extends Fragment {
             @Override
             public void onClick(View v) {
                 CheckBox box = (CheckBox) v;
+                String new_url = url;
                 if (box.isChecked()) {
                     draftingBox.setChecked(false);
                     postedBox.setChecked(false);
                     finishedBox.setChecked(false);
-                    url += "&task_status=Ongoing";
+                    new_url += "&task_status=Ongoing";
                 }
-                getAllTasks(url, view);
+                getAllTasks(new_url, view);
             }
         });
 
@@ -268,13 +269,14 @@ public class Manage extends Fragment {
             @Override
             public void onClick(View v) {
                 CheckBox box = (CheckBox) v;
+                String new_url = url;
                 if (box.isChecked()) {
                     draftingBox.setChecked(false);
                     postedBox.setChecked(false);
                     ongoingBox.setChecked(false);
-                    url += "&task_status=Deleted";
+                    new_url += "&task_status=Deleted";
                 }
-                getAllTasks(url, view);
+                getAllTasks(new_url, view);
             }
         });
     }
