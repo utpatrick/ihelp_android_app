@@ -96,7 +96,7 @@ public class Manage extends Fragment {
                         JSONObject obj = response.getJSONObject(i);
                         TaskCard card = new TaskCard(obj.getString("task_title"),
                                 obj.getString("task_detail"), obj.getString("task_owner"));
-                        card.setTaskID( obj.getString("task_id"));
+                        card.setTaskID(obj.getString("task_id"));
                         items.add(card);
                     }
                     TaskListAdapter adapter = new TaskListAdapter(getActivity(), R.layout.task_card,items);

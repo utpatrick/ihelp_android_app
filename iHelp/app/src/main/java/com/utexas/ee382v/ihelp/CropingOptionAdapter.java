@@ -12,12 +12,6 @@ import android.content.Context;
 
 import java.util.ArrayList;
 
-/**
- * Adapter for crop option list.
- * 
- * @author Lorensius W. L. T <lorenz@londatiga.net>
- *
- */
 
 import java.util.ArrayList;
 
