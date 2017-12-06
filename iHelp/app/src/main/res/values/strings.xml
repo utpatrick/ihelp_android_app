@@ -1,4 +1,27 @@
 <resources>
+    <string-array name="task_names">
+        <item>Food</item>
+        <item>Drink</item>
+        <item>Ride</item>
+        <item>Other</item>
+    </string-array>
+
+    <!-- Slide_1 info -->
+    <string name="slide_1_title">Food</string>
+    <string name="slide_1_desc">Get food from others or for others!</string>
+
+    <!-- Slide_2 info -->
+    <string name="slide_2_title">Drink</string>
+    <string name="slide_2_desc">Get drink from others or for others!</string>
+
+    <!-- Slide_3 info -->
+    <string name="slide_3_title">Ride</string>
+    <string name="slide_3_desc">Get share-ride from others or for others!</string>
+
+    <!-- Slide_4 info -->
+    <string name="slide_4_title">More</string>
+    <string name="slide_4_desc">Get anything from others or for others!</string>
+
     <string name="app_name">iHelp</string>
     <string name="title_activity_view_all">ViewAll</string>
     <string name="i_need_help">I need help</string>
@@ -24,36 +47,12 @@
     <string name="no_activity">No Action Available</string>
     <string name="drafting">Drafting</string>
     <string name="posted">Posted</string>
+    <string name="finished">Completed</string>
     <string name="status">Status:</string>
-
-    <string-array name="task_names">
-        <item>Food</item>
-        <item>Drink</item>
-        <item>Drive</item>
-        <item>Other</item>
-    </string-array>
-
-    <!-- Slide_1 info -->
-    <string name="slide_1_title">Food</string>
-    <string name="slide_1_desc">Get food from others or for others!</string>
-
-    <!-- Slide_2 info -->
-    <string name="slide_2_title">Drink</string>
-    <string name="slide_2_desc">Get drink from others or for others!</string>
-
-    <!-- Slide_3 info -->
-    <string name="slide_3_title">Ride</string>
-    <string name="slide_3_desc">Get share-ride from others or for others!</string>
-
-    <!-- Slide_4 info -->
-    <string name="slide_4_title">More</string>
-    <string name="slide_4_desc">Get anything from others or for others!</string>
-
     <string name="my_preference">"com.utexas.ee382v.ihelp.MyPref"</string>
     <string name="my_preference_key">"com.utexas.ee382v.ihelp.MyPrefKey"</string>
-
-    <string name="finished">Finished</string>
     <string name="ongoing">Ongoing</string>
-    <string name="pending">Pending</string>
     <string name="title_activity_edit_profile">EditProfile</string>
+    <string name="title_activity_crop_image">CropImage</string>
+
 </resources>

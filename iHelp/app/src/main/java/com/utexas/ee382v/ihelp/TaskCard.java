@@ -6,6 +6,7 @@ package com.utexas.ee382v.ihelp;
 
 public class TaskCard {
 
+    private String id;
     private String title;
     private String content;
     private String ownerEmail;
@@ -61,9 +62,7 @@ public class TaskCard {
         return helpee;
     }
 
-    public void setHelpee(String helpee) {
-        this.helpee = helpee;
-    }
+    public void setHelpee(String helpee) { this.helpee = helpee;}
 
     public boolean isNeedHelp() {
         return needHelp;
@@ -96,4 +95,8 @@ public class TaskCard {
     public void setOwnerEmail(String ownerEmail) {
         this.ownerEmail = ownerEmail;
     }
+
+    public void setTaskID(String taskID){ this.id = taskID;}
+
+    public String getTaskID(){ return id;}
 }
