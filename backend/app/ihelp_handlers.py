@@ -37,47 +37,92 @@ class PostATask(webapp2.RequestHandler):
                                         task_onwer, extra_credit)
         if post_status == 0:
 
-            response_content = {'status': 'ok',}
+            response_content = {'status': 'ok'}
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
 
 class GetAllTasks(webapp2.RequestHandler):
     def get(self):
+        owner_email = self.request.get('owner_email')
         all_tasks = model.get_tasks_by_status()
         sorted_task = sorted(all_tasks, key=lambda x: x.last_update, reverse=True)
-        response_content = [{'task_title': s.title, 'task_category': s.category, 'task_type': s.type,
-                             'task_detail': s.description, 'task_location': s.task_location,
-                             'desitination_location': s.final_dest, 'task_status': s.status,
-                             'task_onwer': s.owner_email, 'extra_credit': s.credit} for s in sorted_task]
+        response_content = [{'task_title': s.title,
+                             'task_category': s.category,
+                             'task_type': s.type,
+                             'task_detail': s.description,
+                             'task_location': s.task_location,
+                             'desitination_location': s.final_dest,
+                             'task_status': s.status,
+                             'task_onwer': s.owner_email,
+                             'extra_credit': s.credit,
+                             'task_id': s.key.id()} for s in sorted_task]
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
 
-class UpdateProfile(blobstore_handlers.BlobstoreUploadHandler):
+class ManageTasks(webapp2.RequestHandler):
+    def get(self):
+        owner_email = self.request.get('owner_email')
+        task_status = self.request.get('task_status')
+        all_tasks = model.get_tasks_by_email(owner_email)
+        sorted_task = sorted(all_tasks, key=lambda x: x.last_update, reverse=True)
+        response_content = []
+        for task in sorted_task:
+            owner = task.owner_email
+            if (not task_status or task.status == task_status) and task.status != 'Deleted':
+                response_content.append({'task_title': task.title,
+                                         'task_detail': task.description,
+                                         'task_owner': task.owner_email,
+                                         'task_status': task.status,
+                                         'task_id': task.key.id()})
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps(response_content))
+
+
+class CreateUser(webapp2.RequestHandler):
     def post(self):
-        stream_name = self.request.get('stream')
         user_email = self.request.get('user_email')
-        user_id = model.user_email_to_user_id(user_email)
-        title = self.request.get('title')
-        content = self.get_uploads()[0]
-        lat = self.request.get('lat')
-        long = self.request.get('long')
-        tags = self.request.get('tags')
-        geo_info = ndb.GeoPt(float(lat), float(long))
-        model.add_photo_geo(user_id, stream_name, title, content.key(), geo_info, tags)
-        if content:
-            response_content = {'status': 'ok',
-                                'lat': lat,
-                                'longG': long}
+        user_name = self.request.get('user_name')
+        profile_image = self.request.get('profile_image')
+        create_status = model.create_user(user_email, user_name, profile_image)
+        if create_status == 0:
+            response_content = {'status': 'ok'}
+        elif create_status == 1:
+            response_content = {'status': 'existed'}
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps(response_content))
+
+
+class UpdateProfile(webapp2.RequestHandler):
+    def post(self):
+        user_email = self.request.get('user_email')
+        display_name = self.request.get('display_name')
+        profile_image = self.request.get('profile_image')
+        update_status = model.update_profile(user_email, display_name, profile_image)
+        if update_status == 0:
+            response_content = {'status': 'ok'}
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
     def get(self):
-        upload_url = blobstore.create_upload_url('/android/upload_image')
+        user_email = self.request.get('user_email')
+        user = model.get_user_by_email(user_email)
         self.response.headers['Content-Type'] = 'application/json'
-        response_content = {'uploadURL': upload_url}
+        response_content = {'display_name': user.display_name,
+                            'credit': user.credit, 'rating': user.rating}
         self.response.out.write(json.dumps(response_content))
+
+
+class ProfileImage(webapp2.RequestHandler):
+    def get(self):
+        user_email = self.request.get('user_email')
+        user = model.get_user_by_email(user_email)
+        if user:
+            self.response.headers['Content-Type'] = 'image/png'
+            self.response.out.write(user.profile_image)
+        else:
+            self.response.out.write('No image')
 
 
 class ICanHelp(webapp2.RequestHandler):
@@ -88,12 +133,12 @@ class ICanHelp(webapp2.RequestHandler):
         response_content = []
         for task in sorted_task:
             owner = task.owner_email
+            if (not category or task.category == category) and task.status == 'Posted':
             profile_image = model.get_icon(owner)
-            if (not category or task.category == category) and task.status == 'posted':
                 response_content.append({'task_title': task.title,
                                          'task_detail': task.description,
                                          'task_owner': task.owner_email,
-                                         'icon': profile_image})
+                                         'task_id': task.key.id()})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
@@ -106,12 +151,12 @@ class INeedHelp(webapp2.RequestHandler):
         response_content = []
         for task in sorted_task:
             owner = task.owner_email
+            if (not category or task.category == category) and task.status == ('Posted' or 'Ongoing'):
             profile_image = model.get_icon(owner)
-            if (not category or task.category == category) and task.status == 'posted':
-                response_content.append({'task_title': task.title,
+            response_content.append({'task_title': task.title,
                                          'task_detail': task.description,
                                          'task_owner': task.owner_email,
-                                         'icon': profile_image})
+                                         'task_id': task.key.id()})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
@@ -121,7 +166,7 @@ class ViewTask(webapp2.RequestHandler):
         owner_email = self.request.get('task_owner')
         task_title = self.request.get('task_title')
         task = model.get_task(owner_email, task_title)
-        owner_name = model.get_name_by_email(owner_email)
+        owner_display_name = model.get_name_by_email(owner_email)
         if task:
             response_content = {'task_title': task.title,
                                 'task_category': task.category,
@@ -131,8 +176,9 @@ class ViewTask(webapp2.RequestHandler):
                                 'destination': task.final_dest,
                                 'task_status': task.status,
                                 'task_owner': task.owner_email,
-                                'owner_name': owner_name,
-                                'extra_credit': task.credit}
+                                'owner_name': owner_display_name,
+                                'extra_credit': task.credit,
+                                'task_id': task.key.id()}
             self.response.headers['Content-Type'] = 'application/json'
             self.response.out.write(json.dumps(response_content))
 
@@ -145,6 +191,27 @@ class GetIcon(webapp2.RequestHandler):
             self.response.out.write(icon)
 
 
+class DeleteTask(webapp2.RequestHandler):
+    def post(self):
+        task_id = self.request.get('task_id')
+        owner_email = self.request.get('owner_email')
+        post_status = model.delete_task(owner_email, task_id)
+        if post_status == 0:
+            response_content = {'status': 'ok'}
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps(response_content))
+
+    def get(self):
+        task_id = self.request.get('task_id')
+        task = model.get_task_by_id(task_id)
+        if task:
+            response_content = {'status': 'ok'}
+        else:
+            response_content = {'status': 'no'}
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps(response_content))
+
+
 class ChangeStatus(webapp2.RequestHandler):
     def get(self):
         owner = self.request.get('owner')
@@ -153,15 +220,21 @@ class ChangeStatus(webapp2.RequestHandler):
         status = self.request.get('status')
         model.update_task(owner, task_title, requestee, status)
 
+
 # [START app]
 app = webapp2.WSGIApplication([
     ('/android/post_a_task', PostATask),
     ('/android/get_all_task', GetAllTasks),
+    ('/android/manage_task', ManageTasks),
+    ('/android/create_user', CreateUser),
     ('/android/update_profile', UpdateProfile),
     ('/android/get_icon', GetIcon),
     ('/android/i_can_help', ICanHelp),
     ('/android/i_need_help', INeedHelp),
     ('/android/view_task', ViewTask),
-    ('/android/change_status', ChangeStatus)
+    ('/android/change_status', ChangeStatus),
+    ('/android/profile_image', ProfileImage),
+    ('/android/change_status', ChangeStatus),
+    ('/android/delete_task', DeleteTask)
 ], debug=True)
 # [END app]

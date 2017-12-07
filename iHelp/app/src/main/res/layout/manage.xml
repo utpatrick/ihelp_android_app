@@ -8,38 +8,51 @@
     tools:layout_editor_absoluteY="81dp">
 
     <CheckBox
-        android:id="@+id/pending_filter"
+        android:id="@+id/drafting_filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/pending"
-        app:layout_constraintEnd_toStartOf="@+id/ongoing_filter"
+        android:text="@string/drafting"
+        app:layout_constraintEnd_toStartOf="@+id/posted_filter"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_image" />
 
     <CheckBox
+        android:id="@+id/posted_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/posted"
+        app:layout_constraintBottom_toBottomOf="@+id/drafting_filter"
+        app:layout_constraintEnd_toStartOf="@+id/ongoing_filter"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/drafting_filter"
+        app:layout_constraintTop_toTopOf="@+id/drafting_filter"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <CheckBox
         android:id="@+id/ongoing_filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/ongoing"
-        app:layout_constraintBottom_toBottomOf="@+id/pending_filter"
+        app:layout_constraintBottom_toBottomOf="@+id/posted_filter"
         app:layout_constraintEnd_toStartOf="@+id/finished_filter"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/pending_filter"
-        app:layout_constraintTop_toTopOf="@+id/pending_filter" />
+        app:layout_constraintStart_toEndOf="@+id/posted_filter"
+        app:layout_constraintTop_toTopOf="@+id/posted_filter"
+        app:layout_constraintVertical_bias="0.0" />
 
     <CheckBox
         android:id="@+id/finished_filter"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="33dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
         android:text="@string/finished"
         app:layout_constraintBottom_toBottomOf="@+id/ongoing_filter"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ongoing_filter"
-        app:layout_constraintTop_toTopOf="@+id/ongoing_filter" />
+        app:layout_constraintTop_toTopOf="@+id/ongoing_filter"
+        app:layout_constraintVertical_bias="1.0" />
 
     <ListView
         android:id="@+id/manage_listview"
@@ -57,7 +70,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pending_filter"
+        app:layout_constraintTop_toBottomOf="@+id/drafting_filter"
         app:layout_constraintVertical_bias="0.0" />
 
     <ImageButton
@@ -74,7 +87,7 @@
         app:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/edit_btn"
         android:layout_width="30dp"
         android:layout_height="32dp"
         android:onClick="editProfile"

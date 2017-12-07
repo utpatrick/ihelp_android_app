@@ -16,6 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,8 +47,10 @@ public class ICanHelp extends Fragment {
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject obj = response.getJSONObject(i);
-                        items.add(new TaskCard(obj.getString("task_title"),
-                                obj.getString("task_detail"), obj.getString("task_owner")));
+                        TaskCard card = new TaskCard(obj.getString("task_title"),
+                                obj.getString("task_detail"), obj.getString("task_owner"));
+                        card.setTaskID(obj.getString("task_id"));
+                        items.add(card);
                     }
                     TaskListAdapter adapter = new TaskListAdapter(getActivity(), R.layout.task_card,items);
                     ListView lv = parent.findViewById(R.id.ican_help_listview);

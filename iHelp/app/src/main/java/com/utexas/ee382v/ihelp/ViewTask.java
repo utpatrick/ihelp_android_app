@@ -52,8 +52,8 @@ public class ViewTask extends AppCompatActivity {
                     nameView.setTag(owner_email);
                     ImageView imageView = findViewById(R.id.view_task_image);
                     String url = MainActivity.getEndpoint() +
-                            "/android/get_icon?owner_email=" + owner_email;
-                    Picasso.with(getApplicationContext()).load(url).into(imageView);
+                            "/android/profile_image?user_email=" + owner_email;
+                    Picasso.with(getApplicationContext()).load(url).fit().into(imageView);
                     TextView titleView = findViewById(R.id.view_task_title);
                     titleView.setText(title);
                     TextView locationView = findViewById(R.id.view_task_location);
@@ -74,7 +74,7 @@ public class ViewTask extends AppCompatActivity {
                             action.setText(R.string.provide_help);
                         }
                     } else if ("pending".equals(status)){
-                        statusView.setText(R.string.pending);
+                        statusView.setText(R.string.posted);
                         statusView.setTextColor(getResources().getColor(R.color.yellow));
 
                         if (owner_email != null && owner_email.equals(MainActivity.getUserEmail())) {
