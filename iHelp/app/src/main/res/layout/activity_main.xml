@@ -4,9 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
     tools:context="com.utexas.ee382v.ihelp.MainActivity">
 
+
+    <VideoView
+        android:id="@+id/bgvideoview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/button3"
@@ -61,8 +71,8 @@
 
     <TextView
         android:id="@+id/textView4"
-        android:layout_width="300dp"
-        android:layout_height="80dp"
+        android:layout_width="400dp"
+        android:layout_height="100dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
@@ -70,6 +80,8 @@
         android:text="iHelp"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+        android:textColor="@android:color/white"
+        android:textSize="70sp"
         app:layout_constraintBottom_toTopOf="@+id/bn_login"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

@@ -1,6 +1,8 @@
 package com.utexas.ee382v.ihelp;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.VideoView;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.NoConnectionError;
@@ -61,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected static String gmail;
     private boolean signinStatus;
     private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com/";
+    private VideoView mVideoView;
 
 
     @Override
@@ -74,6 +78,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         setContentView(R.layout.activity_main);
+
+        mVideoView = findViewById(R.id.bgvideoview);
+        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg);
+        mVideoView.setVideoURI(uri);
+        mVideoView.start();
+
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping(true);
+
+            }
+        });
         loginButton = (LoginButton)findViewById(R.id.login_button);
         loginButton.setReadPermissions("email","public_profile");
         callbackManager = CallbackManager.Factory.create();
@@ -140,6 +157,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return email;
         }
 
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mVideoView = (VideoView)findViewById(R.id.bgvideoview);
+        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg);
+        mVideoView.setVideoURI(uri);
+        mVideoView.start();
+
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping(true);
+
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     public static String getUserName() {
