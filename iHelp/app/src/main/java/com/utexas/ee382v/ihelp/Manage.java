@@ -4,10 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +32,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,11 +44,21 @@ public class Manage extends Fragment {
 
     private final static int EDIT_PROFILE_CODE = 7635;
     private ImageButton edit_btn;
-    private final static String url = MainActivity.getEndpoint()+ "/android/manage_task?owner_email=" + MainActivity.getUserEmail();;
+    private static String url;
+    private View view;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.manage, container, false);
+        view = inflater.inflate(R.layout.manage, container, false);
+        url = MainActivity.getEndpoint()+ "/android/manage_task?owner_email=" + MainActivity.getUserEmail();
+        swipeRefreshLayout = view.findViewById(R.id.manage_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getAllTasks(url, view);
+            }
+        });
         getAllTasks(url, view);
         setUpCheckBox(view);
 
@@ -123,10 +131,12 @@ public class Manage extends Fragment {
                             startActivity(intent);
                         }
                     });
+                    swipeRefreshLayout.setRefreshing(false);
                 } catch (org.json.JSONException e) {
                     e.printStackTrace();
+                    swipeRefreshLayout.setRefreshing(false);
                 } finally {
-
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             }
         }, new Response.ErrorListener() {
@@ -166,6 +176,7 @@ public class Manage extends Fragment {
                 try {
                     JSONObject result = new JSONObject(resultResponse);
                     String status = result.getString("status");
+                    getAllTasks(url, view);
                     Log.d("delete_status", status);
                 } catch (JSONException e) {
                     e.printStackTrace();

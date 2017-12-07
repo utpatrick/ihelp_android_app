@@ -3,9 +3,11 @@ package com.utexas.ee382v.ihelp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -16,7 +18,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,16 +29,26 @@ import java.util.ArrayList;
  */
 
 public class ICanHelp extends Fragment {
-
-
+    private View view;
+    private String url;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ListView lv;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.ican_help, container, false);
-        String url = MainActivity.getEndpoint()+ "/android/i_can_help";
+        view = inflater.inflate(R.layout.ican_help, container, false);
+        swipeRefreshLayout = view.findViewById(R.id.ican_help_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getAllTasks(url, view);
+            }
+        });
+        url = MainActivity.getEndpoint()+ "/android/i_can_help";
         getAllTasks(url, view);
         setUpCheckBox(view);
         return view;
     }
+
 
     private void getAllTasks(final String url, final View parent) {
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
@@ -66,10 +77,12 @@ public class ICanHelp extends Fragment {
                             startActivity(intent);
                         }
                     });
+                    swipeRefreshLayout.setRefreshing(false);
                 } catch (org.json.JSONException e) {
                     e.printStackTrace();
+                    swipeRefreshLayout.setRefreshing(false);
                 } finally {
-
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             }
         }, new Response.ErrorListener() {

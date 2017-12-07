@@ -54,5 +54,5 @@
     <string name="ongoing">Ongoing</string>
     <string name="title_activity_edit_profile">EditProfile</string>
     <string name="title_activity_crop_image">CropImage</string>
-
+    <string name="new_task_created">New Task Created</string>
 </resources>

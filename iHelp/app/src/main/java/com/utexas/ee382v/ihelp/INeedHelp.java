@@ -3,6 +3,7 @@ package com.utexas.ee382v.ihelp;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,11 +28,21 @@ import java.util.ArrayList;
  */
 
 public class INeedHelp extends Fragment {
+    private View view;
+    private String url;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.ineed_help, container, false);
-        String url = MainActivity.getEndpoint()+ "/android/i_need_help";
+        view = inflater.inflate(R.layout.ineed_help, container, false);
+        url = MainActivity.getEndpoint()+ "/android/i_need_help";
+        swipeRefreshLayout = view.findViewById(R.id.ineed_help_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getAllTasks(url, view);
+            }
+        });
         getAllTasks(url, view);
         setUpCheckBox(view);
         return view;
@@ -64,10 +75,12 @@ public class INeedHelp extends Fragment {
                             startActivity(intent);
                         }
                     });
+                    swipeRefreshLayout.setRefreshing(false);
                 } catch (org.json.JSONException e) {
                     e.printStackTrace();
+                    swipeRefreshLayout.setRefreshing(false);
                 } finally {
-
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             }
         }, new Response.ErrorListener() {
