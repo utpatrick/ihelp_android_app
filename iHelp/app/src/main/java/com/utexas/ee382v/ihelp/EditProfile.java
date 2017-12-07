@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -13,7 +12,7 @@ import android.widget.ImageView;
 
 import java.io.IOException;
 
-public class EditProfile extends AppCompatActivity {
+public class EditProfile extends MainActivity {
 
     public final static int PICK_PHOTO_CODE = 1046;
     private Uri photoUri;
@@ -29,6 +28,14 @@ public class EditProfile extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
+    @Override
+    public void onClick(View view){
+        Intent intent = new Intent(this,MainActivity.class);
+        new PreferenceManager(this).clearPreference();
+        signOut();
+        startActivity(intent);
     }
 
     @Override

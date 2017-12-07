@@ -28,28 +28,28 @@
         app:layout_constraintRight_toRightOf="parent" />
 
     <com.facebook.login.widget.LoginButton
+        xmlns:facebook="http://schemas.android.com/apk/res-auto"
         android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="22dp"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/bn_login"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+         />
 
 
     <Button
         android:id="@+id/bn_logout"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="190dp"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp"
         android:text="Logout"
         android:textAppearance="@style/TextAppearance.AppCompat"
         android:textColor="@color/cardview_light_background"
@@ -67,7 +67,6 @@
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:layout_marginTop="8dp"
-        android:fontFamily="casual"
         android:text="iHelp"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Display3"
@@ -78,7 +77,7 @@
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/bn_login"
-        android:layout_width="190dp"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"

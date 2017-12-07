@@ -18,6 +18,7 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
+//import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -43,18 +44,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private static final int REQ_CODE = 9001;
-    static String name;
-    static String email;
-    static String gname;
-    static String gmail;
+    private static String name;
+    protected static String email;
+    private static String gname;
+    protected static String gmail;
     private boolean signinStatus;
     private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com/";
+
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if(Build.VERSION.SDK_INT >= 19) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject object, GraphResponse response) {
+
                         if (response.getError() != null) {
                             // handle error
                         } else {
@@ -93,10 +97,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             name = object.optString("name");
                             //String birthday = me.optString("user_birthday");
 
-                            System.out.println(email);
-                            System.out.println(name);
-                            System.out.println(gmail);
-                            System.out.println(gname);
+                            //System.out.println(email);
+                            //System.out.println(name);
+                            //System.out.println(gmail);
+                            //System.out.println(gname);
                             //System.out.println(birthday);
                         }
                         updateUI(true);
@@ -127,29 +131,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public static String getUserEmail(){
-        if (gmail == null && email != null) {
+        if(gmail != null){
+            return gmail;
+        }
+        else {
             return email;
         }
-        else if (gmail != null && email == null) {
-            return gmail;
-        }
-        else if (gmail != null && email != null) {
-            return gmail;
-        }
-        return null;
+
     }
 
     public static String getUserName() {
-        if (name == null && gname != null) {
+        if(gname != null) {
             return gname;
         }
-        else if (gname != null && name == null) {
+        else {
             return name;
         }
-        else if (gname != null && name != null) {
-            return gname;
-        }
-        return null;
     }
 
     private void signIn(){
@@ -160,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivityForResult(intent, REQ_CODE);
     }
 
-    private void signOut(){
+    public void signOut(){
         Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(@NonNull Status status) {

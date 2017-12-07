@@ -48,16 +48,18 @@ public class ViewAll extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if(Build.VERSION.SDK_INT >= 19) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
         else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-        if(MainActivity.email == null && MainActivity.gmail == null) {
+        if(MainActivity.getUserEmail() == null) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
+
         setContentView(R.layout.activity_view_all);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -102,8 +104,8 @@ public class ViewAll extends AppCompatActivity {
 
 
 
-    private void setupViewPager(ViewPager viewPager) {
-        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
+    private void setupViewPager(final ViewPager viewPager) {
+        final SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new INeedHelp());
         adapter.addFragment(new ICanHelp());
         adapter.addFragment(new PostATask());
@@ -118,6 +120,7 @@ public class ViewAll extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 bottomNavigation.setCurrentItem(position);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -174,6 +177,11 @@ public class ViewAll extends AppCompatActivity {
 
         public void addFragment(Fragment fragment) {
             mFragmentList.add(fragment);
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
         }
     }
 
