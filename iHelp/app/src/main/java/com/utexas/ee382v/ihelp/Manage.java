@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.os.SystemClock.sleep;
+
 /**
  * Created by Patrick on 11/27/17.
  */
@@ -176,6 +178,7 @@ public class Manage extends Fragment {
                 try {
                     JSONObject result = new JSONObject(resultResponse);
                     String status = result.getString("status");
+                    sleep(100);
                     getAllTasks(url, view);
                     Log.d("delete_status", status);
                 } catch (JSONException e) {
