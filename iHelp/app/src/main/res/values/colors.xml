@@ -13,6 +13,8 @@
     <color name="yellow">#F1C40F</color>
     <color name="green">#27AE60</color>
     <color name="blue">#2874A6</color>
+    <color name="coral">#FF7F50	</color>
+
 
     <color name="active_dots">#fffafa</color>
     <color name="inactive_dots">#83878b</color>

@@ -65,9 +65,11 @@ public class ViewTask extends AppCompatActivity {
                     TextView titleView = findViewById(R.id.view_task_title);
                     titleView.setText(title);
                     TextView locationView = findViewById(R.id.view_task_location);
-                    locationView.setText("Location: " + location);
+                    locationView.setText(location);
+                    locationView.setTextColor(getResources().getColor(R.color.coral));
                     TextView destView = findViewById(R.id.view_task_dest);
-                    destView.setText("Destination: " + destination);
+                    destView.setText(destination);
+                    destView.setTextColor(getResources().getColor(R.color.coral));
                     TextView contentView = findViewById(R.id.view_task_content);
                     contentView.setText(detail);
                     TextView statusView = findViewById(R.id.view_task_status);
