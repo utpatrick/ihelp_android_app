@@ -1,6 +1,7 @@
 package com.utexas.ee382v.ihelp;
 
 import android.content.Intent;
+import android.location.Location;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,16 +29,25 @@ import java.util.ArrayList;
 
 public class INeedHelp extends Fragment {
 
+    private Location location;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ineed_help, container, false);
         String url = MainActivity.getEndpoint()+ "/android/i_need_help";
+        location = ViewAll.getLastLocation();
         getAllTasks(url, view);
         setUpCheckBox(view);
         return view;
     }
 
-    private void getAllTasks(final String url, final View parent) {
+    private void getAllTasks(String url, final View parent) {
+        double latitude = 0, longitude = 0;
+        if (location != null) {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        }
+        url += "?latitude="+ latitude + "&longitude=" + longitude;
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -85,18 +95,25 @@ public class INeedHelp extends Fragment {
         final CheckBox rideBox = view.findViewById(R.id.ineed_help_cb3);
         final CheckBox otherBox = view.findViewById(R.id.ineed_help_cb4);
 
+        double latitude = 0, longitude = 0;
+        if (location != null) {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        }
+        final String url = MainActivity.getEndpoint()+ "/android/i_need_help" +
+                "?latitude="+ latitude + "&longitude=" + longitude;
         foodBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CheckBox box = (CheckBox) v;
-                String url = MainActivity.getEndpoint()+ "/android/i_need_help";
+                String new_url = url;
                 if (box.isChecked()) {
                     drinkBox.setChecked(false);
                     rideBox.setChecked(false);
                     otherBox.setChecked(false);
-                    url += "?category=Food";
+                    new_url += "&category=Food";
                 }
-                getAllTasks(url, view);
+                getAllTasks(new_url, view);
             }
         });
 
@@ -104,14 +121,14 @@ public class INeedHelp extends Fragment {
             @Override
             public void onClick(View v) {
                 CheckBox box = (CheckBox) v;
-                String url = MainActivity.getEndpoint()+ "/android/i_need_help";
+                String new_url = url;
                 if (box.isChecked()) {
                     foodBox.setChecked(false);
                     rideBox.setChecked(false);
                     otherBox.setChecked(false);
-                    url += "?category=Drink";
+                    new_url += "&category=Drink";
                 }
-                getAllTasks(url, view);
+                getAllTasks(new_url, view);
             }
         });
 
@@ -119,14 +136,14 @@ public class INeedHelp extends Fragment {
             @Override
             public void onClick(View v) {
                 CheckBox box = (CheckBox) v;
-                String url = MainActivity.getEndpoint()+ "/android/i_need_help";
+                String new_url = url;
                 if (box.isChecked()) {
                     drinkBox.setChecked(false);
                     foodBox.setChecked(false);
                     otherBox.setChecked(false);
-                    url += "?category=Ride";
+                    new_url += "&category=Ride";
                 }
-                getAllTasks(url, view);
+                getAllTasks(new_url, view);
             }
         });
 
@@ -134,14 +151,14 @@ public class INeedHelp extends Fragment {
             @Override
             public void onClick(View v) {
                 CheckBox box = (CheckBox) v;
-                String url = MainActivity.getEndpoint()+ "/android/i_need_help";
+                String new_url = url;
                 if (box.isChecked()) {
                     drinkBox.setChecked(false);
                     rideBox.setChecked(false);
                     foodBox.setChecked(false);
-                    url += "?category=Other";
+                    new_url += "&category=Other";
                 }
-                getAllTasks(url, view);
+                getAllTasks(new_url, view);
             }
         });
     }

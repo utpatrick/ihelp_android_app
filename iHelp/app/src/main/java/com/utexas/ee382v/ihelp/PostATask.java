@@ -3,6 +3,7 @@ package com.utexas.ee382v.ihelp;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -52,7 +53,7 @@ public class PostATask extends Fragment implements View.OnClickListener{
     public Button draft;
     public Button post;
     private String task_status;
-
+    private Location location;
     public String task_location;
     public String task_destination;
 
@@ -61,6 +62,7 @@ public class PostATask extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.post_a_task, container,false);
+        location = ViewAll.getLastLocation();
         GiveHelp = view.findViewById(R.id.imageGiveHelp);
         NeedHelp = view.findViewById(R.id.imageNeedHelp);
         title = view.findViewById(R.id.task_title);
@@ -163,7 +165,14 @@ public class PostATask extends Fragment implements View.OnClickListener{
             progressDialog.setMessage("Posting, please wait...");
             progressDialog.show();
 
-            final String request_url = MainActivity.getEndpoint() + "/android/post_a_task";
+            double latitude = 0, longitude = 0;
+            if (location != null) {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+            }
+
+            final String request_url = MainActivity.getEndpoint() + "/android/post_a_task?latitude="
+                    + latitude + "&longitude=" + longitude;
 
             VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, request_url, new Response.Listener<NetworkResponse>() {
                 @Override
