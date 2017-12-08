@@ -285,7 +285,7 @@ public class Manage extends Fragment {
                     draftingBox.setChecked(false);
                     postedBox.setChecked(false);
                     ongoingBox.setChecked(false);
-                    new_url += "&task_status=Deleted";
+                    new_url += "&task_status=Completed";
                 }
                 getAllTasks(new_url, view);
             }

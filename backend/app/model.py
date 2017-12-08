@@ -5,8 +5,8 @@ class User(ndb.Model):
     user_email = ndb.StringProperty()
     user_name = ndb.StringProperty()
     display_name = ndb.StringProperty()
-    rating = ndb.IntegerProperty()
-    ratings_all = ndb.IntegerProperty(repeated=True)
+    rating = ndb.FloatProperty()
+    ratings_all = ndb.FloatProperty(repeated=True)
     credit = ndb.IntegerProperty()
     profile_image = ndb.BlobProperty()
 
@@ -111,9 +111,10 @@ def update_task(owner_email, task_title, requestee, status):
     if task:
         if status == 'Posted':
             task.status = 'Ongoing'
-        elif status == 'Pending':
+        elif status == 'Ongoing':
             task.status = 'Completed'
-
+        elif status == 'Drafting':
+            task.status = 'Posted'
         if task.type == 'provide_help':
             task.helpee = requestee
         elif task.type == 'need_help':
@@ -133,7 +134,7 @@ def create_user(user_email, user_name, profile_image):
     else:
         new_user = User(user_email=user_email, user_name=user_name,
                         display_name=user_name, profile_image=profile_image,
-                        credit=50, rating=5, ratings_all=[5])
+                        credit=50, rating=5.0, ratings_all=[5.0])
         new_user.put()
         return 0
 
@@ -146,3 +147,16 @@ def update_profile(user_email, display_name, profile_image):
     return 0
 
 
+def get_rating(user_email):
+    user = get_user_by_email(user_email)
+    if user:
+        return user.rating
+
+
+def update_rating(user_email, rating):
+    user = get_user_by_email(user_email)
+    if user:
+        user.ratings_all.append(float(rating))
+        user.rating = sum(user.ratings_all) / len(user.ratings_all)
+        print(user.rating)
+        user.put()

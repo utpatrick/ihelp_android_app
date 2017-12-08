@@ -44,12 +44,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,7 +67,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static String gname;
     private static String gmail;
     private boolean signinStatus;
-    private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com/";
+//    private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com/";
+    private static final String BACKEND_ENDPOINT = "http://10.0.2.2:8080";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
