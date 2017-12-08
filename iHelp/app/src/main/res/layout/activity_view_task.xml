@@ -118,7 +118,7 @@
             app:layout_constraintStart_toEndOf="@+id/view_task_location"
             app:layout_constraintTop_toTopOf="@+id/view_task_location" />
 
-        <Button
+        <com.beardedhen.androidbootstrap.BootstrapButton
             android:id="@+id/view_task_action_btn"
             android:layout_width="0dp"
             android:layout_height="50dp"
