@@ -7,6 +7,21 @@
     android:layout_height="match_parent"
     tools:context="com.utexas.ee382v.ihelp.ViewTask">
 
+    <TextView
+        android:id="@+id/view_task_type"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/place_holder"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout3"
         android:layout_width="0dp"
@@ -16,8 +31,11 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/border"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/view_task_type">
 
         <TextView
             android:id="@+id/view_task_name"
@@ -66,26 +84,16 @@
         android:background="@drawable/border"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
         app:layout_constraintVertical_bias="0.0">
 
-        <TextView
-            android:id="@+id/view_task_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/place_holder"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view_task_title" />
 
         <TextView
             android:id="@+id/view_task_title"
-            android:layout_width="166dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_marginLeft="72dp"
             android:layout_marginStart="8dp"
@@ -153,22 +161,11 @@
             android:id="@+id/view_task_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:text="@string/place_holder"
             android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/view_task_status_tag"
-            app:layout_constraintStart_toEndOf="@+id/view_task_status_tag"
-            app:layout_constraintTop_toTopOf="@+id/view_task_status_tag" />
-
-        <TextView
-            android:id="@+id/view_task_status_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:text="@string/status"
-            app:layout_constraintBottom_toBottomOf="@+id/view_task_type"
-            app:layout_constraintStart_toEndOf="@+id/view_task_type"
-            app:layout_constraintTop_toTopOf="@+id/view_task_type" />
+            app:layout_constraintBottom_toBottomOf="@+id/view_task_title"
+            app:layout_constraintStart_toEndOf="@+id/view_task_title" />
 
         <TextView
             android:id="@+id/view_task_location_label"
@@ -181,7 +178,7 @@
             android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view_task_type" />
+            app:layout_constraintTop_toBottomOf="@+id/view_task_title" />
 
         <TextView
             android:id="@+id/view_task_destination_label"

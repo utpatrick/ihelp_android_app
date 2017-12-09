@@ -109,10 +109,10 @@ public class ViewTask extends AppCompatActivity {
 
                     if ("provide_help".equals(type)) {
                         TextView typeView = findViewById(R.id.view_task_type);
-                        typeView.setText("Type: " + getResources().getString(R.string.provide_help));
+                        typeView.setText(getResources().getString(R.string.provide_help));
                     } else {
                         TextView typeView = findViewById(R.id.view_task_type);
-                        typeView.setText("Type: " + getResources().getString(R.string.need_help));
+                        typeView.setText(getResources().getString(R.string.need_help));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

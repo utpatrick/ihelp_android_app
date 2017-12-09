@@ -75,6 +75,7 @@ class ManageTasks(webapp2.RequestHandler):
                                          'task_detail': task.description,
                                          'task_owner': task.owner_email,
                                          'task_status': task.status,
+                                         'task_category': task.category,
                                          'task_id': task.key.id()})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
@@ -136,6 +137,7 @@ class ICanHelp(webapp2.RequestHandler):
                 response_content.append({'task_title': task.title,
                                          'task_detail': task.description,
                                          'task_owner': task.owner_email,
+                                         'task_category': task.category,
                                          'task_id': task.key.id()})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
@@ -152,6 +154,7 @@ class INeedHelp(webapp2.RequestHandler):
                 response_content.append({'task_title': task.title,
                                          'task_detail': task.description,
                                          'task_owner': task.owner_email,
+                                         'task_category': task.category,
                                          'task_id': task.key.id()})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))

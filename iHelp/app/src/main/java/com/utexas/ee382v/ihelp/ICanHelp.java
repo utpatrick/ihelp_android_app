@@ -61,6 +61,9 @@ public class ICanHelp extends Fragment {
                         TaskCard card = new TaskCard(obj.getString("task_title"),
                                 obj.getString("task_detail"), obj.getString("task_owner"));
                         card.setTaskID(obj.getString("task_id"));
+                        if (obj.getString("task_category") != null) {
+                            card.setCategory(obj.getString("task_category"));
+                        }
                         items.add(card);
                     }
                     TaskListAdapter adapter = new TaskListAdapter(getActivity(), R.layout.task_card,items);

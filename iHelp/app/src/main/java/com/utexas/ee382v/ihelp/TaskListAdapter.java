@@ -61,6 +61,37 @@ public class TaskListAdapter extends ArrayAdapter<TaskCard>{
         holder.idView.setText(item.getTaskID());
         Log.d("task_id_when_creating", item.getTaskID());
         holder.contentView.setText(item.getContent());
+
+        String category = item.getCategory();
+        TextView categoryView = view.findViewById(R.id.task_card_category);
+        View container = view.findViewById(R.id.task_card_layout);
+        View innerContainer = view.findViewById(R.id.card_view);
+        if (category != null) {
+            categoryView.setText(category);
+            switch (category) {
+                case "Food":
+                    container.setBackgroundColor(mContext.getResources().getColor(R.color.food_card_color));
+                    innerContainer.setBackgroundColor(mContext.getResources().getColor(R.color.food_card_color));
+                    categoryView.setTextColor(mContext.getResources().getColor(R.color.food_card_category_color));
+                    break;
+                case "Drink":
+                    container.setBackgroundColor(mContext.getResources().getColor(R.color.drink_card_color));
+                    innerContainer.setBackgroundColor(mContext.getResources().getColor(R.color.drink_card_color));
+                    categoryView.setTextColor(mContext.getResources().getColor(R.color.drink_card_category_color));
+                    break;
+                case "Ride":
+                    container.setBackgroundColor(mContext.getResources().getColor(R.color.ride_card_color));
+                    innerContainer.setBackgroundColor(mContext.getResources().getColor(R.color.ride_card_color));
+                    categoryView.setTextColor(mContext.getResources().getColor(R.color.ride_card_category_color));
+                    break;
+                default:
+                    container.setBackgroundColor(mContext.getResources().getColor(R.color.other_card_color));
+                    innerContainer.setBackgroundColor(mContext.getResources().getColor(R.color.other_card_color));
+                    categoryView.setTextColor(mContext.getResources().getColor(R.color.other_card_category_color));
+                    break;
+            }
+        }
+
         if (item.getTitle() != null) holder.titleView.setTag(item.getTitle());
         holder.imageView.setTag(item.getOwnerEmail());
         String link = MainActivity.getEndpoint() + "/android/profile_image?user_email=" + item.getOwnerEmail();
