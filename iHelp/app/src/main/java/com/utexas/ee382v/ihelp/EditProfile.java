@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -71,6 +72,7 @@ public class EditProfile extends MainActivity {
     private final static int REQUEST_PERMISSION_REQ_CODE = 34;
     private final static int CAMERA_CODE = 101, GALLERY_CODE = 201, CROPING_CODE = 301;
 
+    private Context mContext;
     private ImageButton profile_img_btn;
     private EditText display_name;
     private TextView rating_input;
@@ -91,7 +93,7 @@ public class EditProfile extends MainActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         setContentView(R.layout.activity_edit_profile);
-
+        mContext = this.getApplicationContext();
         getProfile();
 
         outPutFile = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
@@ -99,8 +101,6 @@ public class EditProfile extends MainActivity {
         StrictMode.setVmPolicy(builder.build());
 
         profile_img_btn = (ImageButton) findViewById(R.id.profileButton);
-        final String image_url = MainActivity.getEndpoint() + "/android/profile_image?user_email=" + MainActivity.getUserEmail();
-        Picasso.with(this).load(image_url).fit().into(profile_img_btn);
         profile_img_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,7 +120,8 @@ public class EditProfile extends MainActivity {
         save_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateProfileImage();
+                uploadProfileImage();
+                setResult(RESULT_OK);
                 finish();
             }
         });
@@ -316,7 +317,7 @@ public class EditProfile extends MainActivity {
         return null;
     }
 
-    private String updateProfileImage(){
+    private String uploadProfileImage(){
         final String request_url = MainActivity.getEndpoint() + "/android/update_profile";
 
         VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, request_url, new Response.Listener<NetworkResponse>() {
@@ -383,7 +384,9 @@ public class EditProfile extends MainActivity {
     }
 
     private void getProfile() {
-        final String profile_url = MainActivity.getEndpoint() + "/android/update_profile?user_email=" + MainActivity.getUserEmail();
+        final String profile_url = MainActivity.getEndpoint()
+                + "/android/update_profile?user_email=" + MainActivity.getUserEmail()
+                + "&time=" + Double.toString(System.nanoTime());
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, profile_url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -396,6 +399,7 @@ public class EditProfile extends MainActivity {
                     rating_input.setText(response.getString("rating"));
                     user_email_input = (TextView) findViewById(R.id.userEmailInput);
                     user_email_input.setText(MainActivity.getUserEmail());
+                    updateProfileImage();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -407,5 +411,13 @@ public class EditProfile extends MainActivity {
             }
         });
         Volley.newRequestQueue(this).add(jsonRequest);
+    }
+
+    private void updateProfileImage(){
+        profile_img_btn = (ImageButton) findViewById(R.id.profileButton);
+        final String image_url = MainActivity.getEndpoint()
+                + "/android/profile_image?user_email=" + MainActivity.getUserEmail()
+                + "&time=" + Double.toString(System.nanoTime());
+        Picasso.with(mContext).load(image_url).fit().into(profile_img_btn);
     }
 }

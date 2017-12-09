@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static String gname;
     private static String gmail;
     private boolean signinStatus;
-    private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com/";
+    private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

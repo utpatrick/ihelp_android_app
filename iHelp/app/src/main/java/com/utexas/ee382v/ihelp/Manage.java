@@ -2,6 +2,7 @@ package com.utexas.ee382v.ihelp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -46,15 +47,26 @@ public class Manage extends Fragment {
 
     private final static int EDIT_PROFILE_CODE = 7635;
     private ImageButton edit_btn;
-    private final static String url = MainActivity.getEndpoint()+ "/android/manage_task?owner_email=" + MainActivity.getUserEmail();;
+    private final static String url = MainActivity.getEndpoint()+ "/android/manage_task?owner_email=" + MainActivity.getUserEmail();
+    private CheckBox draftingBox;
+    private CheckBox postedBox;
+    private CheckBox ongoingBox;
+    private CheckBox finishedBox;
+    private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.manage, container, false);
+        view = inflater.inflate(R.layout.manage, container, false);
+        draftingBox = view.findViewById(R.id.drafting_filter);
+        postedBox = view.findViewById(R.id.posted_filter);
+        ongoingBox = view.findViewById(R.id.ongoing_filter);
+        finishedBox = view.findViewById(R.id.finished_filter);
         getAllTasks(url, view);
         setUpCheckBox(view);
-
-        final String image_url = MainActivity.getEndpoint() + "/android/profile_image?user_email=" + MainActivity.getUserEmail();
+        String image_url = MainActivity.getEndpoint()
+                + "/android/profile_image?user_email=" + MainActivity.getUserEmail()
+                + "&time=" + Double.toString(System.nanoTime());
+        Log.d("system_time", Double.toString(System.nanoTime()));
         ImageView profileImage = (ImageView) view.findViewById(R.id.profile_image);
         Picasso.with(getContext()).load(image_url).fit().into(profileImage);
 
@@ -80,8 +92,20 @@ public class Manage extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == EDIT_PROFILE_CODE && resultCode == Activity.RESULT_OK && null != data) {
-            // waiting for fragment refresh implementation
+        //Log.d("requestCode", Integer.toString(requestCode));
+        //Log.d("requestCode_edit", Integer.toString(EDIT_PROFILE_CODE));
+        //Log.d("resultCode", Integer.toString(resultCode));
+        //Log.d("resultCode_ok", Integer.toString(Activity.RESULT_OK));
+        if (requestCode == EDIT_PROFILE_CODE && resultCode == Activity.RESULT_OK) {
+            Log.d("status", "ok");
+            getAllTasks(url, view);
+            String image_url = MainActivity.getEndpoint()
+                    + "/android/profile_image?user_email=" + MainActivity.getUserEmail()
+                    + "&time=" + Double.toString(System.nanoTime());
+            Log.d("image_url", image_url);
+            ImageView profileImage = (ImageView) view.findViewById(R.id.profile_image);
+            Log.d("image", profileImage.toString());
+            Picasso.with(this.getContext()).load(image_url).fit().into(profileImage);
         }
     }
 
@@ -151,9 +175,33 @@ public class Manage extends Fragment {
                 } else if (items[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
+                updateTaskAfterDelete(view);
             }
         });
         builder.show();
+    }
+
+    private void updateTaskAfterDelete(View view){
+        if(draftingBox.isSelected()){
+            String new_url = url;
+            new_url += "&task_status=Drafting";
+            getAllTasks(new_url, view);
+        }else if(postedBox.isSelected()){
+            String new_url = url;
+            new_url += "&task_status=Posted";
+            getAllTasks(new_url, view);
+        }else if(ongoingBox.isSelected()){
+            String new_url = url;
+            new_url += "&task_status=Ongoing";
+            getAllTasks(new_url, view);
+        }else if(finishedBox.isSelected()){
+            String new_url = url;
+            new_url += "&task_status=Completed";
+            getAllTasks(new_url, view);
+        }else{
+            String new_url = url;
+            getAllTasks(new_url, view);
+        }
     }
 
     private String deleteTasks(final String task_id){
@@ -215,11 +263,6 @@ public class Manage extends Fragment {
     }
 
     private void setUpCheckBox(final View view) {
-        final CheckBox draftingBox = view.findViewById(R.id.drafting_filter);
-        final CheckBox postedBox = view.findViewById(R.id.posted_filter);
-        final CheckBox ongoingBox = view.findViewById(R.id.ongoing_filter);
-        final CheckBox finishedBox = view.findViewById(R.id.finished_filter);
-
         draftingBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -274,7 +317,7 @@ public class Manage extends Fragment {
                     draftingBox.setChecked(false);
                     postedBox.setChecked(false);
                     ongoingBox.setChecked(false);
-                    new_url += "&task_status=Deleted";
+                    new_url += "&task_status=Completed";
                 }
                 getAllTasks(new_url, view);
             }
