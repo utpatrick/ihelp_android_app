@@ -34,7 +34,10 @@ import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.PushNotificationTask;
 import com.applozic.mobicomkit.api.account.user.User;
+import com.applozic.mobicomkit.api.account.user.UserClientService;
 import com.applozic.mobicomkit.api.account.user.UserLoginTask;
+import com.applozic.mobicomkit.api.account.user.UserLogoutTask;
+import com.applozic.mobicomkit.feed.ApiResponse;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -81,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static String gmail;
     private static String user_display_name;
     private boolean signinStatus;
+    private Context mContext;
     private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com";
 
     @Override
@@ -93,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
         setContentView(R.layout.activity_main);
+        this.mContext = this;
         loginButton = (LoginButton)findViewById(R.id.login_button);
         loginButton.setReadPermissions("email","public_profile");
         callbackManager = CallbackManager.Factory.create();
@@ -194,6 +199,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 updateUI(false);
             }
         });
+
+        if(MobiComUserPreference.getInstance(this).isLoggedIn()){
+            Log.d("msg_status", "logged in");
+        }
+
+        UserLogoutTask.TaskListener userLogoutTaskListener = new UserLogoutTask.TaskListener() {
+            @Override
+            public void onSuccess(Context context) {
+                //Logout success
+                Log.d("msg_logout", "successful");
+            }
+            @Override
+            public void onFailure(Exception exception) {
+                //Logout failure
+                Log.d("msg_logout", "failed");
+            }
+        };
+        UserLogoutTask userLogoutTask = new UserLogoutTask(userLogoutTaskListener, mContext);
+        userLogoutTask.execute((Void) null);
     }
 
     private void handleResult(GoogleSignInResult result){
