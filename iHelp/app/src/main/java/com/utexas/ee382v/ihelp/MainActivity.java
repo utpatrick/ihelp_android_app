@@ -1,6 +1,7 @@
 package com.utexas.ee382v.ihelp;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,6 +18,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.NoConnectionError;
@@ -24,13 +27,18 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
+import com.applozic.mobicomkit.api.account.user.User;
+import com.applozic.mobicomkit.api.account.user.UserLoginTask;
+//import com.facebook.CallbackManager;
+//import com.facebook.FacebookCallback;
+//import com.facebook.FacebookException;
+//import com.facebook.GraphRequest;
+//import com.facebook.GraphResponse;
+//import com.facebook.login.LoginResult;
+//import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 //import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -60,13 +68,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private GoogleApiClient googleApiClient;
     private GoogleSignInAccount account;
     private Button GotoviewAll;
-    private LoginButton loginButton;
-    private CallbackManager callbackManager;
+//    private LoginButton loginButton;
+//    private CallbackManager callbackManager;
     private static final int REQ_CODE = 9001;
     private static String name;
     private static String email;
     private static String gname;
     private static String gmail;
+    private static String user_display_name;
     private boolean signinStatus;
     private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com";
 
@@ -80,42 +89,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
         setContentView(R.layout.activity_main);
-        loginButton = (LoginButton)findViewById(R.id.login_button);
-        loginButton.setReadPermissions("email","public_profile");
-        callbackManager = CallbackManager.Factory.create();
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                String user_id = loginResult.getAccessToken().getUserId();
-                GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(JSONObject object, GraphResponse response) {
-                        if (response.getError() != null) {
-                            // handle error
-                        } else {
-                            email = object.optString("email");
-                            name = object.optString("name");
-                        }
-                        updateUI(true);
-                    }
-                });
-                //email = jsonObject.getString("email");
-                Bundle parameters = new Bundle();
-                parameters.putString("fields","name, email, id");
-                graphRequest.setParameters(parameters);
-                graphRequest.executeAsync();
-                //email = .getString()
-
-            }
-
-            @Override
-            public void onCancel() {
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-            }
-        });
+//        loginButton = (LoginButton)findViewById(R.id.login_button);
+//        loginButton.setReadPermissions("email","public_profile");
+//        callbackManager = CallbackManager.Factory.create();
+//        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+//            @Override
+//            public void onSuccess(LoginResult loginResult) {
+//                String user_id = loginResult.getAccessToken().getUserId();
+//                GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+//                    @Override
+//                    public void onCompleted(JSONObject object, GraphResponse response) {
+//                        if (response.getError() != null) {
+//                            // handle error
+//                        } else {
+//                            email = object.optString("email");
+//                            name = object.optString("name");
+//                        }
+//                        updateUI(true);
+//                    }
+//                });
+//                //email = jsonObject.getString("email");
+//                Bundle parameters = new Bundle();
+//                parameters.putString("fields","name, email, id");
+//                graphRequest.setParameters(parameters);
+//                graphRequest.executeAsync();
+//                //email = .getString()
+//
+//            }
+//
+//            @Override
+//            public void onCancel() {
+//            }
+//
+//            @Override
+//            public void onError(FacebookException error) {
+//            }
+//        });
 
         // Google Sign in part
         SignOut = (Button)findViewById(R.id.bn_logout);
@@ -155,6 +164,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private String getUserDisplayName(){
+            final String profile_url = MainActivity.getEndpoint()
+                    + "/android/update_profile?user_email=" + MainActivity.getUserEmail()
+                    + "&time=" + Double.toString(System.nanoTime());
+            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, profile_url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        user_display_name = (response.get("display_name").toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                }
+            });
+            Volley.newRequestQueue(this.getApplicationContext()).add(jsonRequest);
+            return user_display_name;
+        }
+
     private void signIn(){
         Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         signinStatus = true;
@@ -180,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 this.gmail = account.getEmail();
                 updateUI(true);
                 createUser();
+                createMsgUser();
             }
             Intent intent = new Intent(this, ViewAll.class);
             startActivity(intent);
@@ -190,6 +223,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void createMsgUser(){
+        UserLoginTask.TaskListener listener = new UserLoginTask.TaskListener() {
+
+            @Override
+            public void onSuccess(RegistrationResponse registrationResponse, Context context) {
+                //After successful registration with Applozic server the callback will come here
+            }
+
+            @Override
+            public void onFailure(RegistrationResponse registrationResponse, Exception exception) {
+                //If any failure in registration the callback  will come here
+            }};
+
+        User user = new User();
+        user.setUserId(getUserEmail()); //userId it can be any unique user identifier NOTE : +,*,? are not allowed chars in userId.
+        Log.d("user_display_name", user_display_name);
+        user.setDisplayName(getUserDisplayName()); //displayName is the name of the user which will be shown in chat messages
+        user.setEmail(getUserEmail()); //optional
+        user.setAuthenticationTypeId(User.AuthenticationType.APPLOZIC.getValue());  //User.AuthenticationType.APPLOZIC.getValue() for password verification from Applozic server and User.AuthenticationType.CLIENT.getValue() for access Token verification from your server set access token as password
+        user.setPassword(""); //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
+        user.setImageLink("");//optional, set your image link if you have
+        new UserLoginTask(user, listener, this).execute((Void) null);
+    }
+
 
     private void updateUI(boolean isLogin){
         if(isLogin){
@@ -197,14 +254,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             SignIn.setVisibility(View.GONE);
             SignOut.setVisibility(View.VISIBLE);
             GotoviewAll.setVisibility(View.VISIBLE);
-            loginButton.setVisibility(View.GONE);
+            //loginButton.setVisibility(View.GONE);
         }
         else{
             signinStatus = false;
             SignIn.setVisibility(View.VISIBLE);
             SignOut.setVisibility(View.GONE);
             GotoviewAll.setVisibility(View.GONE);
-            loginButton.setVisibility(View.VISIBLE);
+            //loginButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -243,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        //callbackManager.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQ_CODE) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
