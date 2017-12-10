@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.android.volley.NetworkResponse;
@@ -25,6 +26,8 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
@@ -77,7 +80,9 @@ public class Manage extends Fragment {
         });
 
         final String task_url = MainActivity.getEndpoint() + "/android/delete_task?task_id=" + MainActivity.getUserEmail();
-
+        String rating_url = MainActivity.getEndpoint() + "/android/get_rating?user_email=" + MainActivity.getUserEmail();
+        TextView rating = view.findViewById(R.id.manage_rating);
+        getRating(rating_url, rating);
 
         return view;
     }
@@ -93,6 +98,33 @@ public class Manage extends Fragment {
         if (requestCode == EDIT_PROFILE_CODE && resultCode == Activity.RESULT_OK && null != data) {
             // waiting for fragment refresh implementation
         }
+    }
+
+    private void getRating(final String url, final TextView ratingView) {
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try{
+                            String rating = response.getString("rating");
+                            if (rating != null) {
+                                ratingView.setText(rating + " / 5.0");
+                            } else {
+                                ratingView.setText("N/A");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+        Volley.newRequestQueue(getActivity()).add(jsObjRequest);
     }
 
     private void getAllTasks(final String url, final View parent) {

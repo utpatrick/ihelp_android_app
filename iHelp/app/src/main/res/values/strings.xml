@@ -3,6 +3,8 @@
         <item>Food</item>
         <item>Drink</item>
         <item>Ride</item>
+        <item>Delivery</item>
+        <item>Study</item>
         <item>Other</item>
     </string-array>
 

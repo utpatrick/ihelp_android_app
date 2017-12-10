@@ -73,35 +73,48 @@ public class TaskListAdapter extends ArrayAdapter<TaskCard>{
                     container.setBackgroundColor(mContext.getResources().getColor(R.color.food_card_color));
                     innerContainer.setBackgroundColor(mContext.getResources().getColor(R.color.food_card_color));
                     categoryView.setTextColor(mContext.getResources().getColor(R.color.food_card_category_color));
+                    holder.imageView.setBackgroundColor(mContext.getResources().getColor(R.color.food_card_icon_color));
+                    holder.imageView.setImageResource(R.drawable.food);
                     break;
                 case "Drink":
                     container.setBackgroundColor(mContext.getResources().getColor(R.color.drink_card_color));
                     innerContainer.setBackgroundColor(mContext.getResources().getColor(R.color.drink_card_color));
                     categoryView.setTextColor(mContext.getResources().getColor(R.color.drink_card_category_color));
+                    holder.imageView.setBackgroundColor(mContext.getResources().getColor(R.color.drink_card_icon_color));
+                    holder.imageView.setImageResource(R.drawable.drink);
                     break;
                 case "Ride":
                     container.setBackgroundColor(mContext.getResources().getColor(R.color.ride_card_color));
                     innerContainer.setBackgroundColor(mContext.getResources().getColor(R.color.ride_card_color));
                     categoryView.setTextColor(mContext.getResources().getColor(R.color.ride_card_category_color));
+                    holder.imageView.setBackgroundColor(mContext.getResources().getColor(R.color.ride_card_icon_color));
+                    holder.imageView.setImageResource(R.drawable.car);
+                    break;
+                case "Delivery":
+                    container.setBackgroundColor(mContext.getResources().getColor(R.color.delivery_card_color));
+                    innerContainer.setBackgroundColor(mContext.getResources().getColor(R.color.delivery_card_color));
+                    categoryView.setTextColor(mContext.getResources().getColor(R.color.delivery_card_category_color));
+                    holder.imageView.setBackgroundColor(mContext.getResources().getColor(R.color.delivery_card_icon_color));
+                    holder.imageView.setImageResource(R.drawable.delivery);
+                    break;
+                case "Study":
+                    container.setBackgroundColor(mContext.getResources().getColor(R.color.study_card_color));
+                    innerContainer.setBackgroundColor(mContext.getResources().getColor(R.color.study_card_color));
+                    categoryView.setTextColor(mContext.getResources().getColor(R.color.study_card_category_color));
+                    holder.imageView.setBackgroundColor(mContext.getResources().getColor(R.color.study_card_icon_color));
+                    holder.imageView.setImageResource(R.drawable.study);
                     break;
                 default:
                     container.setBackgroundColor(mContext.getResources().getColor(R.color.other_card_color));
                     innerContainer.setBackgroundColor(mContext.getResources().getColor(R.color.other_card_color));
-                    categoryView.setTextColor(mContext.getResources().getColor(R.color.other_card_category_color));
+                    categoryView.setTextColor(mContext.getResources().getColor(R.color.other_card_icon_color));
+                    holder.imageView.setImageResource(R.drawable.question_mark);
                     break;
             }
         }
 
         if (item.getTitle() != null) holder.titleView.setTag(item.getTitle());
         holder.imageView.setTag(item.getOwnerEmail());
-        String link = MainActivity.getEndpoint() + "/android/profile_image?user_email=" + item.getOwnerEmail();
-        Log.d("image_link", link);
-        if (link == null || link.length() < 1 || link.startsWith("/static/images/")) {
-            Picasso.with(mContext).load(R.drawable.active_dots).into(holder.imageView);
-        } else {
-            Log.d("image_plotted", "successful!");
-            Picasso.with(mContext).load(link).fit().into(holder.imageView);
-        }
         return view;
     }
 }

@@ -150,6 +150,7 @@ def update_profile(user_email, display_name, profile_image):
 def get_rating(user_email):
     user = get_user_by_email(user_email)
     if user:
+        print(user.rating)
         return user.rating
 
 

@@ -225,6 +225,14 @@ class ChangeStatus(webapp2.RequestHandler):
             model.update_rating(owner, rating)
 
 
+class GetRating(webapp2.RequestHandler):
+    def get(self):
+        owner = self.request.get('user_email')
+        response_content = {'rating': model.get_rating(owner)}
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps(response_content))
+
+
 # [START app]
 app = webapp2.WSGIApplication([
     ('/android/post_a_task', PostATask),
@@ -239,6 +247,7 @@ app = webapp2.WSGIApplication([
     ('/android/change_status', ChangeStatus),
     ('/android/profile_image', ProfileImage),
     ('/android/change_status', ChangeStatus),
+    ('/android/get_rating', GetRating),
     ('/android/delete_task', DeleteTask)
 ], debug=True)
 # [END app]
