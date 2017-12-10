@@ -247,7 +247,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/task_details"
-        app:srcCompat="@drawable/car" />
+        app:srcCompat="@drawable/quantum_ic_replay_white_24" />
 
 
 </android.support.constraint.ConstraintLayout>

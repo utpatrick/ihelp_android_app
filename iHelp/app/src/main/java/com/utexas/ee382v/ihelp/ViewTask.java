@@ -14,12 +14,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.applozic.mobicomkit.uiwidgets.conversation.ConversationUIService;
+import com.applozic.mobicomkit.uiwidgets.conversation.activity.ConversationActivity;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ViewTask extends AppCompatActivity {
+
+    private Button chat_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +118,23 @@ public class ViewTask extends AppCompatActivity {
         });
 
         Volley.newRequestQueue(this).add(jsonRequest);
+
+        chat_btn = (Button) findViewById(R.id.chat_btn);
+        chat_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openConversation(view);
+            }
+        });
+    }
+
+    private void openConversation(View view){
+        TextView nameView = findViewById(R.id.view_task_name);
+        Intent intent = new Intent(this, ConversationActivity.class);
+        intent.putExtra(ConversationUIService.USER_ID, nameView.getTag().toString());
+        intent.putExtra(ConversationUIService.DISPLAY_NAME, "Receiver display name"); //put it for displaying the title.
+        intent.putExtra(ConversationUIService.TAKE_ORDER,true); //Skip chat list for showing on back press
+        startActivity(intent);
     }
 
     public void sumbitRequest(View view) {

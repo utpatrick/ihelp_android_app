@@ -29,7 +29,10 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
+import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
+import com.applozic.mobicomkit.api.account.user.PushNotificationTask;
 import com.applozic.mobicomkit.api.account.user.User;
 import com.applozic.mobicomkit.api.account.user.UserLoginTask;
 import com.facebook.CallbackManager;
@@ -52,6 +55,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
+import static android.os.SystemClock.sleep;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -164,6 +168,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public static String getUserDisplayName() {
+        if(user_display_name != null) {
+            return user_display_name;
+        }
+        else {
+            return name;
+        }
+    }
+
+    private void setUserDisplayName(String name) {
+        this.user_display_name = name;
+    }
+
     private void signIn(){
         Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         signinStatus = true;
@@ -207,24 +224,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onSuccess(RegistrationResponse registrationResponse, Context context) {
                 //After successful registration with Applozic server the callback will come here
                 Log.d("create_msg_user", "successful");
+                PushNotificationTask pushNotificationTask = null;
+                PushNotificationTask.TaskListener listener=  new PushNotificationTask.TaskListener() {
+                    @Override
+                    public void onSuccess(RegistrationResponse registrationResponse) {
+
+                    }
+                    @Override
+                    public void onFailure(RegistrationResponse registrationResponse, Exception exception) {
+
+                    }
+
+                };
+                pushNotificationTask = new PushNotificationTask(Applozic.getInstance(context).getDeviceRegistrationId(),listener,context);
+                pushNotificationTask.execute((Void)null);
             }
 
             @Override
             public void onFailure(RegistrationResponse registrationResponse, Exception exception) {
                 //If any failure in registration the callback  will come here
-                Log.d("create_msg_user", "failed");
+                Log.d("create_msg_user", exception.toString());
             }};
 
         User user = new User();
         user.setUserId(getUserEmail()); //userId it can be any unique user identifier NOTE : +,*,? are not allowed chars in userId.
-        Log.d("user_email", getUserEmail());
         user.setDisplayName(getUserName()); //displayName is the name of the user which will be shown in chat messages
-        Log.d("user_name", getUserName());
         user.setEmail(getUserEmail()); //optional
         user.setAuthenticationTypeId(User.AuthenticationType.APPLOZIC.getValue());  //User.AuthenticationType.APPLOZIC.getValue() for password verification from Applozic server and User.AuthenticationType.CLIENT.getValue() for access Token verification from your server set access token as password
         user.setPassword(""); //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
         user.setImageLink("");//optional, set your image link if you have
-        new UserLoginTask(user, listener, this.getApplicationContext()).execute((Void) null);
+        new UserLoginTask(user, listener, this).execute((Void) null);
     }
 
 
@@ -358,15 +387,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return "";
     }
 
-    private String getUserDisplayName(){
+    private void getUserDisplayNameFromServer(){
         final String profile_url = MainActivity.getEndpoint()
-                + "/android/update_profile?user_email=" + MainActivity.getUserEmail()
+                + "/android/update_profile?user_email=" + getUserEmail()
                 + "&time=" + Double.toString(System.nanoTime());
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, profile_url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    user_display_name = (response.get("display_name").toString());
+                    user_display_name = response.get("display_name").toString();
+                    Log.d("displayName_req", user_display_name);
+                    setUserDisplayName(user_display_name);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -378,7 +409,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         Volley.newRequestQueue(this.getApplicationContext()).add(jsonRequest);
-        return user_display_name;
     }
 
 }

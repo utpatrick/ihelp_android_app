@@ -33,9 +33,21 @@
         android:name="android.support.multidex.MultiDexApplication"
         android:theme="@style/AppTheme">
 
+        <service android:name=".pushnotification.FcmListenerService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service android:name=".pushnotification.FcmInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
 
         <meta-data android:name="com.applozic.application.key"
-            android:value="texas1694be3f154e44cfff29e08dcb1ef7f80" /> <!-- Applozic Application Key -->
+            android:value="37a196dfc5b9112eff076bc19bd320a5a" /> <!-- Applozic Application Key -->
 
         <meta-data android:name="com.applozic.mobicomkit.notification.smallIcon"
             android:resource="@drawable/hand" /> <!-- Launcher white Icon -->
