@@ -1,22 +1,17 @@
 package com.utexas.ee382v.ihelp;
 
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.VideoView;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.NoConnectionError;
@@ -32,7 +27,6 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
-//import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -51,6 +45,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+//import com.google.android.gms.auth.api.signin.GoogleSignIn;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener{
 
     private static final String TAG = "ERROR";
@@ -63,12 +59,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private CallbackManager callbackManager;
     private static final int REQ_CODE = 9001;
     private static String name;
-    private static String email;
+    protected static String email;
     private static String gname;
-    private static String gmail;
+    protected static String gmail;
     private boolean signinStatus;
-//    private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com/";
-    private static final String BACKEND_ENDPOINT = "http://10.0.2.2:8080";
+
+    private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com/";
+    private VideoView mVideoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +76,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
+
         setContentView(R.layout.activity_main);
+
+        mVideoView = findViewById(R.id.bgvideoview);
+        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg);
+        mVideoView.setVideoURI(uri);
+        mVideoView.start();
+
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping(true);
+
+            }
+        });
         loginButton = (LoginButton)findViewById(R.id.login_button);
         loginButton.setReadPermissions("email","public_profile");
         callbackManager = CallbackManager.Factory.create();
@@ -90,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject object, GraphResponse response) {
+
                         if (response.getError() != null) {
                             // handle error
                         } else {
@@ -144,6 +156,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else {
             return email;
         }
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mVideoView = (VideoView)findViewById(R.id.bgvideoview);
+        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg);
+        mVideoView.setVideoURI(uri);
+        mVideoView.start();
+
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping(true);
+
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     public static String getUserName() {
