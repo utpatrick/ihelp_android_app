@@ -126,7 +126,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
+            app:srcCompat="@drawable/default_profile" />
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -202,6 +202,7 @@
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
 
             <com.beardedhen.androidbootstrap.AwesomeTextView
                 android:id="@+id/userEmailInput"

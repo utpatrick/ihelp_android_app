@@ -233,6 +233,7 @@ class GetRating(webapp2.RequestHandler):
         self.response.out.write(json.dumps(response_content))
 
 
+
 # [START app]
 app = webapp2.WSGIApplication([
     ('/android/post_a_task', PostATask),

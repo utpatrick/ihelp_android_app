@@ -1,16 +1,27 @@
 package com.utexas.ee382v.ihelp;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.android.volley.NetworkResponse;
@@ -19,6 +30,17 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.applozic.mobicomkit.Applozic;
+import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
+import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
+import com.applozic.mobicomkit.api.account.user.PushNotificationTask;
+import com.applozic.mobicomkit.api.account.user.User;
+import com.applozic.mobicomkit.api.account.user.UserClientService;
+import com.applozic.mobicomkit.api.account.user.UserLoginTask;
+import com.applozic.mobicomkit.api.account.user.UserLogoutTask;
+import com.applozic.mobicomkit.feed.ApiResponse;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -42,6 +64,7 @@ import com.google.android.gms.common.api.Status;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,9 +85,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected static String email;
     private static String gname;
     protected static String gmail;
+    private static String user_display_name;
     private boolean signinStatus;
-
-    private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com/";
+    private Context mContext;
+    private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com";
     private VideoView mVideoView;
 
     @Override
@@ -76,6 +100,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
+        setContentView(R.layout.activity_main);
+        this.mContext = this;
 
         setContentView(R.layout.activity_main);
 
@@ -189,6 +215,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public static String getUserDisplayName() {
+        if(user_display_name != null) {
+            return user_display_name;
+        }
+        else {
+            return name;
+        }
+    }
+
+    private void setUserDisplayName(String name) {
+        this.user_display_name = name;
+    }
+
     private void signIn(){
         Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         signinStatus = true;
@@ -202,6 +241,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 updateUI(false);
             }
         });
+
+        if(MobiComUserPreference.getInstance(this).isLoggedIn()){
+            Log.d("msg_status", "logged in");
+        }
+
+        UserLogoutTask.TaskListener userLogoutTaskListener = new UserLogoutTask.TaskListener() {
+            @Override
+            public void onSuccess(Context context) {
+                //Logout success
+                Log.d("msg_logout", "successful");
+            }
+            @Override
+            public void onFailure(Exception exception) {
+                //Logout failure
+                Log.d("msg_logout", "failed");
+            }
+        };
+        UserLogoutTask userLogoutTask = new UserLogoutTask(userLogoutTaskListener, mContext);
+        userLogoutTask.execute((Void) null);
     }
 
     private void handleResult(GoogleSignInResult result){
@@ -214,6 +272,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 this.gmail = account.getEmail();
                 updateUI(true);
                 createUser();
+                createMsgUser();
             }
             Intent intent = new Intent(this, ViewAll.class);
             startActivity(intent);
@@ -222,6 +281,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("login", "not successful");
             updateUI(false);
         }
+    }
+
+    private void createMsgUser(){
+        UserLoginTask.TaskListener listener = new UserLoginTask.TaskListener() {
+
+            @Override
+            public void onSuccess(RegistrationResponse registrationResponse, Context context) {
+                //After successful registration with Applozic server the callback will come here
+                Log.d("create_msg_user", "successful");
+                PushNotificationTask pushNotificationTask = null;
+                PushNotificationTask.TaskListener listener=  new PushNotificationTask.TaskListener() {
+                    @Override
+                    public void onSuccess(RegistrationResponse registrationResponse) {
+
+                    }
+                    @Override
+                    public void onFailure(RegistrationResponse registrationResponse, Exception exception) {
+
+                    }
+
+                };
+                pushNotificationTask = new PushNotificationTask(Applozic.getInstance(context).getDeviceRegistrationId(),listener,context);
+                pushNotificationTask.execute((Void)null);
+            }
+
+            @Override
+            public void onFailure(RegistrationResponse registrationResponse, Exception exception) {
+                //If any failure in registration the callback  will come here
+                Log.d("create_msg_user", exception.toString());
+            }};
+
+        User user = new User();
+        user.setUserId(getUserEmail()); //userId it can be any unique user identifier NOTE : +,*,? are not allowed chars in userId.
+        user.setDisplayName(getUserName()); //displayName is the name of the user which will be shown in chat messages
+        user.setEmail(getUserEmail()); //optional
+        user.setAuthenticationTypeId(User.AuthenticationType.APPLOZIC.getValue());  //User.AuthenticationType.APPLOZIC.getValue() for password verification from Applozic server and User.AuthenticationType.CLIENT.getValue() for access Token verification from your server set access token as password
+        user.setPassword(""); //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
+        user.setImageLink("");//optional, set your image link if you have
+        new UserLoginTask(user, listener, this).execute((Void) null);
     }
 
 
@@ -277,8 +375,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-
+        //callbackManager.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQ_CODE) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             Log.d("signin", GoogleSignInStatusCodes.getStatusCodeString(result.getStatus().getStatusCode()));
@@ -354,5 +451,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         VolleySingleton.getInstance(this.getApplicationContext()).addToRequestQueue(multipartRequest);
 
         return "";
+    }
+
+    private void getUserDisplayNameFromServer(){
+        final String profile_url = MainActivity.getEndpoint()
+                + "/android/update_profile?user_email=" + getUserEmail()
+                + "&time=" + Double.toString(System.nanoTime());
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, profile_url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    user_display_name = response.get("display_name").toString();
+                    Log.d("displayName_req", user_display_name);
+                    setUserDisplayName(user_display_name);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        Volley.newRequestQueue(this.getApplicationContext()).add(jsonRequest);
     }
 }

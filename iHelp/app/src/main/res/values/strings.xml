@@ -56,6 +56,7 @@
     <string name="ongoing">Ongoing</string>
     <string name="title_activity_edit_profile">EditProfile</string>
     <string name="title_activity_crop_image">CropImage</string>
+    <string name="default_media_location_folder">ihelp_msg_media</string>
     <string name="new_task_created">New Task Created</string>
     <string name="rate_task">Rate this task</string>
     <string name="rating_cancel">Cancel</string>
