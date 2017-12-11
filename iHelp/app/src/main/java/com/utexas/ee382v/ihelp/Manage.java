@@ -2,9 +2,14 @@ package com.utexas.ee382v.ihelp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -16,6 +21,7 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -34,7 +40,21 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +69,10 @@ public class Manage extends Fragment {
 
     private final static int EDIT_PROFILE_CODE = 7635;
     private ImageButton edit_btn;
+    private CheckBox draftingBox;
+    private CheckBox postedBox;
+    private CheckBox ongoingBox;
+    private CheckBox finishedBox;
     private static String url;
     private View view;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -56,6 +80,17 @@ public class Manage extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.manage, container, false);
+
+        draftingBox = view.findViewById(R.id.drafting_filter);
+        postedBox = view.findViewById(R.id.posted_filter);
+        ongoingBox = view.findViewById(R.id.ongoing_filter);
+        finishedBox = view.findViewById(R.id.finished_filter);
+        getAllTasks(url, view);
+        setUpCheckBox(view);
+        String image_url = MainActivity.getEndpoint()
+                + "/android/profile_image?user_email=" + MainActivity.getUserEmail()
+                + "&time=" + Double.toString(System.nanoTime());
+        Log.d("system_time", Double.toString(System.nanoTime()));
         url = MainActivity.getEndpoint()+ "/android/manage_task?owner_email=" + MainActivity.getUserEmail();
         swipeRefreshLayout = view.findViewById(R.id.manage_refresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -67,7 +102,6 @@ public class Manage extends Fragment {
         getAllTasks(url, view);
         setUpCheckBox(view);
 
-        final String image_url = MainActivity.getEndpoint() + "/android/profile_image?user_email=" + MainActivity.getUserEmail();
         ImageView profileImage = (ImageView) view.findViewById(R.id.profile_image);
         Picasso.with(getContext()).load(image_url).fit().into(profileImage);
 
@@ -95,8 +129,20 @@ public class Manage extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == EDIT_PROFILE_CODE && resultCode == Activity.RESULT_OK && null != data) {
-            // waiting for fragment refresh implementation
+        //Log.d("requestCode", Integer.toString(requestCode));
+        //Log.d("requestCode_edit", Integer.toString(EDIT_PROFILE_CODE));
+        //Log.d("resultCode", Integer.toString(resultCode));
+        //Log.d("resultCode_ok", Integer.toString(Activity.RESULT_OK));
+        if (requestCode == EDIT_PROFILE_CODE && resultCode == Activity.RESULT_OK) {
+            Log.d("status", "ok");
+            getAllTasks(url, view);
+            String image_url = MainActivity.getEndpoint()
+                    + "/android/profile_image?user_email=" + MainActivity.getUserEmail()
+                    + "&time=" + Double.toString(System.nanoTime());
+            Log.d("image_url", image_url);
+            ImageView profileImage = (ImageView) view.findViewById(R.id.profile_image);
+            Log.d("image", profileImage.toString());
+            Picasso.with(this.getContext()).load(image_url).fit().into(profileImage);
         }
     }
 
@@ -198,9 +244,33 @@ public class Manage extends Fragment {
                 } else if (items[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
+                updateTaskAfterDelete(view);
             }
         });
         builder.show();
+    }
+
+    private void updateTaskAfterDelete(View view){
+        if(draftingBox.isSelected()){
+            String new_url = url;
+            new_url += "&task_status=Drafting";
+            getAllTasks(new_url, view);
+        }else if(postedBox.isSelected()){
+            String new_url = url;
+            new_url += "&task_status=Posted";
+            getAllTasks(new_url, view);
+        }else if(ongoingBox.isSelected()){
+            String new_url = url;
+            new_url += "&task_status=Ongoing";
+            getAllTasks(new_url, view);
+        }else if(finishedBox.isSelected()){
+            String new_url = url;
+            new_url += "&task_status=Completed";
+            getAllTasks(new_url, view);
+        }else{
+            String new_url = url;
+            getAllTasks(new_url, view);
+        }
     }
 
     private String deleteTasks(final String task_id){

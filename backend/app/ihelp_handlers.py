@@ -179,7 +179,9 @@ class ViewTask(webapp2.RequestHandler):
                                 'owner_name': owner_display_name,
                                 'extra_credit': task.credit,
                                 'rating': owner_rating,
-                                'task_id': task.key.id()}
+                                'task_id': task.key.id(),
+                                'helper_email':task.helper,
+                                'helpee_email':task.helpee}
             self.response.headers['Content-Type'] = 'application/json'
             self.response.out.write(json.dumps(response_content))
 
@@ -231,6 +233,7 @@ class GetRating(webapp2.RequestHandler):
         response_content = {'rating': model.get_rating(owner)}
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
+
 
 
 # [START app]
