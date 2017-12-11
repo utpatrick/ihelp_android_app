@@ -4,10 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.android.volley.NetworkResponse;
@@ -26,6 +26,8 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
@@ -33,10 +35,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.os.SystemClock.sleep;
 
 /**
  * Created by Patrick on 11/27/17.
@@ -46,11 +49,21 @@ public class Manage extends Fragment {
 
     private final static int EDIT_PROFILE_CODE = 7635;
     private ImageButton edit_btn;
-    private final static String url = MainActivity.getEndpoint()+ "/android/manage_task?owner_email=" + MainActivity.getUserEmail();;
+    private static String url;
+    private View view;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.manage, container, false);
+        view = inflater.inflate(R.layout.manage, container, false);
+        url = MainActivity.getEndpoint()+ "/android/manage_task?owner_email=" + MainActivity.getUserEmail();
+        swipeRefreshLayout = view.findViewById(R.id.manage_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getAllTasks(url, view);
+            }
+        });
         getAllTasks(url, view);
         setUpCheckBox(view);
 
@@ -67,7 +80,9 @@ public class Manage extends Fragment {
         });
 
         final String task_url = MainActivity.getEndpoint() + "/android/delete_task?task_id=" + MainActivity.getUserEmail();
-
+        String rating_url = MainActivity.getEndpoint() + "/android/get_rating?user_email=" + MainActivity.getUserEmail();
+        TextView rating = view.findViewById(R.id.manage_rating);
+        getRating(rating_url, rating);
 
         return view;
     }
@@ -85,6 +100,33 @@ public class Manage extends Fragment {
         }
     }
 
+    private void getRating(final String url, final TextView ratingView) {
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try{
+                            String rating = response.getString("rating");
+                            if (rating != null) {
+                                ratingView.setText(rating + " / 5.0");
+                            } else {
+                                ratingView.setText("N/A");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+        Volley.newRequestQueue(getActivity()).add(jsObjRequest);
+    }
+
     private void getAllTasks(final String url, final View parent) {
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
@@ -96,6 +138,9 @@ public class Manage extends Fragment {
                         TaskCard card = new TaskCard(obj.getString("task_title"),
                                 obj.getString("task_detail"), obj.getString("task_owner"));
                         card.setTaskID(obj.getString("task_id"));
+                        if (obj.getString("task_category") != null) {
+                            card.setCategory(obj.getString("task_category"));
+                        }
                         items.add(card);
                     }
                     TaskListAdapter adapter = new TaskListAdapter(getActivity(), R.layout.task_card,items);
@@ -123,10 +168,12 @@ public class Manage extends Fragment {
                             startActivity(intent);
                         }
                     });
+                    swipeRefreshLayout.setRefreshing(false);
                 } catch (org.json.JSONException e) {
                     e.printStackTrace();
+                    swipeRefreshLayout.setRefreshing(false);
                 } finally {
-
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             }
         }, new Response.ErrorListener() {
@@ -166,6 +213,8 @@ public class Manage extends Fragment {
                 try {
                     JSONObject result = new JSONObject(resultResponse);
                     String status = result.getString("status");
+                    sleep(100);
+                    getAllTasks(url, view);
                     Log.d("delete_status", status);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -274,7 +323,7 @@ public class Manage extends Fragment {
                     draftingBox.setChecked(false);
                     postedBox.setChecked(false);
                     ongoingBox.setChecked(false);
-                    new_url += "&task_status=Deleted";
+                    new_url += "&task_status=Completed";
                 }
                 getAllTasks(new_url, view);
             }

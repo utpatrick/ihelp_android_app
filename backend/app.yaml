@@ -50,6 +50,9 @@ handlers:
 - url: /android/image
   script: app.ihelp_handlers.app
 
+- url: /android/get_rating
+  script: app.ihelp_handlers.app
+
 - url: .*
   script: app.ihelp_handlers.app
 

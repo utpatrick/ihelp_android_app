@@ -12,7 +12,29 @@
     <color name="red">#FF0000</color>
     <color name="yellow">#F1C40F</color>
     <color name="green">#27AE60</color>
-    <color name="blue">#508ab0</color>
+    <color name="blue">#2874A6</color>
+    <color name="coral">#FF7F50	</color>
+
+    <color name="food_card_color">#FAE5D3</color>
+    <color name="drink_card_color">#D6EAF8</color>
+    <color name="ride_card_color">#EBDEF0</color>
+    <color name="delivery_card_color">#D6DBDF</color>
+    <color name="study_card_color">#D5F5E3</color>
+    <color name="other_card_color">#FADBD8</color>
+
+    <color name="food_card_category_color">#EB984E</color>
+    <color name="drink_card_category_color">#5DADE2</color>
+    <color name="ride_card_category_color">#AF7AC5</color>
+    <color name="delivery_card_category_color">#5D6D7E</color>
+    <color name="study_card_category_color">#58D68D</color>
+    <color name="other_card_category_color">#CD6155</color>
+
+    <color name="food_card_icon_color">#FAD7A0</color>
+    <color name="drink_card_icon_color">#AED6F1</color>
+    <color name="ride_card_icon_color">#D2B4DE</color>
+    <color name="delivery_card_icon_color">#AEB6BF</color>
+    <color name="study_card_icon_color">#ABEBC6</color>
+    <color name="other_card_icon_color">#E6B0AA</color>
 
     <color name="active_dots">#fffafa</color>
     <color name="inactive_dots">#83878b</color>

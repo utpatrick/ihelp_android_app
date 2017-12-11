@@ -1,11 +1,15 @@
 package com.utexas.ee382v.ihelp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -46,7 +50,11 @@ public class ViewTask extends AppCompatActivity {
                     String owner_email = response.getString("task_owner");
                     String credit = response.getString("extra_credit");
                     String status = response.getString("task_status");
+                    String rating = response.getString("rating");
 
+                    RatingBar ratingBar = findViewById(R.id.view_task_rating);
+                    ratingBar.setRating(Float.valueOf(rating));
+                    ratingBar.setIsIndicator(true);
                     TextView nameView = findViewById(R.id.view_task_name);
                     nameView.setText(owner_name);
                     nameView.setTag(owner_email);
@@ -57,15 +65,17 @@ public class ViewTask extends AppCompatActivity {
                     TextView titleView = findViewById(R.id.view_task_title);
                     titleView.setText(title);
                     TextView locationView = findViewById(R.id.view_task_location);
-                    locationView.setText("Location: " + location);
+                    locationView.setText(location);
+                    locationView.setTextColor(getResources().getColor(R.color.coral));
                     TextView destView = findViewById(R.id.view_task_dest);
-                    destView.setText("Destination: " + destination);
+                    destView.setText(destination);
+                    destView.setTextColor(getResources().getColor(R.color.coral));
                     TextView contentView = findViewById(R.id.view_task_content);
                     contentView.setText(detail);
                     TextView statusView = findViewById(R.id.view_task_status);
                     Button action = findViewById(R.id.view_task_action_btn);
 
-                    if ("posted".equals(status)) {
+                    if ("Posted".equals(status)) {
                         statusView.setText(R.string.posted);
                         statusView.setTextColor(getResources().getColor(R.color.green));
                         if ("provide_help".equals(type)) {
@@ -73,8 +83,8 @@ public class ViewTask extends AppCompatActivity {
                         } else {
                             action.setText(R.string.provide_help);
                         }
-                    } else if ("pending".equals(status)){
-                        statusView.setText(R.string.posted);
+                    } else if ("Ongoing".equals(status)){
+                        statusView.setText(R.string.ongoing);
                         statusView.setTextColor(getResources().getColor(R.color.yellow));
 
                         if (owner_email != null && owner_email.equals(MainActivity.getUserEmail())) {
@@ -85,10 +95,12 @@ public class ViewTask extends AppCompatActivity {
                         }
 
                     } else {
-                        if ("completed".equals(status)) {
+                        if ("Completed".equals(status)) {
                             statusView.setText(R.string.completed);
                             statusView.setTextColor(getResources().getColor(R.color.blue));
-                        } else if ("drafting".equals(status)){
+                            action.setText(R.string.no_activity);
+                            action.setEnabled(false);
+                        } else if ("Drafting".equals(status)){
                             statusView.setText(R.string.drafting);
                             statusView.setTextColor(getResources().getColor(R.color.red));
                         }
@@ -97,10 +109,10 @@ public class ViewTask extends AppCompatActivity {
 
                     if ("provide_help".equals(type)) {
                         TextView typeView = findViewById(R.id.view_task_type);
-                        typeView.setText("Type: " + getResources().getString(R.string.provide_help));
+                        typeView.setText(getResources().getString(R.string.provide_help));
                     } else {
                         TextView typeView = findViewById(R.id.view_task_type);
-                        typeView.setText("Type: " + getResources().getString(R.string.need_help));
+                        typeView.setText(getResources().getString(R.string.need_help));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -123,9 +135,41 @@ public class ViewTask extends AppCompatActivity {
         String title = (String) titleView.getText();
         TextView statusView = findViewById(R.id.view_task_status);
         String status = (String) statusView.getText();
-        String url = MainActivity.getEndpoint() + "/android/change_status?" +
+
+        final String url = MainActivity.getEndpoint() + "/android/change_status?" +
                 "owner=" + owner + "&task_title=" + title + "&requestee=" +
                 MainActivity.getUserEmail() + "&status=" + status;
+
+        if ("Ongoing".equals(status)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ViewTask.this);
+            LayoutInflater inflater = getLayoutInflater();
+            final View ratingDialog = inflater.inflate(R.layout.rating_dialog,null);
+            final RatingBar reviewRating = ratingDialog.findViewById(R.id.rating_dialog_ratingbar);
+            builder.setTitle(R.string.rate_task)
+                    .setView(ratingDialog)
+                    .setPositiveButton(R.string.rating_confirm, new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    float rating = reviewRating.getRating();
+                    String new_url = url + "&rating=" + rating;
+                    makeNetworkRequest(new_url);
+                    finish();
+                }
+                    }).setNegativeButton(R.string.rating_cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String new_url = url + "&rating=5";
+                    makeNetworkRequest(new_url);
+                    finish();
+                }
+            });
+            builder.show();
+        } else {
+            makeNetworkRequest(url);
+        }
+    }
+
+    private void makeNetworkRequest(String url) {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
