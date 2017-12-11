@@ -15,6 +15,7 @@ public class TaskCard {
     private String helper;
     private String helpee;
     private boolean needHelp;
+    private String category;
 
     public TaskCard(String title, String content, String ownerEmail) {
         this.title = title;
@@ -32,6 +33,21 @@ public class TaskCard {
         this.helper = helper;
         this.helpee = helpee;
         this.needHelp = needHelp;
+    }
+
+    public TaskCard(String title, String content, String ownerEmail, String category) {
+        this.title = title;
+        this.content = content;
+        this.ownerEmail = ownerEmail;
+        this.category = category;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getTaskLocation() {

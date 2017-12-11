@@ -75,6 +75,7 @@ class ManageTasks(webapp2.RequestHandler):
                                          'task_detail': task.description,
                                          'task_owner': task.owner_email,
                                          'task_status': task.status,
+                                         'task_category': task.category,
                                          'task_id': task.key.id()})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
@@ -132,12 +133,11 @@ class ICanHelp(webapp2.RequestHandler):
         sorted_task = sorted(tasks, key=lambda x: x.last_update, reverse=True)
         response_content = []
         for task in sorted_task:
-            owner = task.owner_email
             if (not category or task.category == category) and task.status == 'Posted':
-            profile_image = model.get_icon(owner)
                 response_content.append({'task_title': task.title,
                                          'task_detail': task.description,
                                          'task_owner': task.owner_email,
+                                         'task_category': task.category,
                                          'task_id': task.key.id()})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
@@ -150,12 +150,11 @@ class INeedHelp(webapp2.RequestHandler):
         sorted_task = sorted(tasks, key=lambda x: x.last_update, reverse=True)
         response_content = []
         for task in sorted_task:
-            owner = task.owner_email
-            if (not category or task.category == category) and task.status == ('Posted' or 'Ongoing'):
-            profile_image = model.get_icon(owner)
-            response_content.append({'task_title': task.title,
+            if (not category or task.category == category) and task.status == 'Posted':
+                response_content.append({'task_title': task.title,
                                          'task_detail': task.description,
                                          'task_owner': task.owner_email,
+                                         'task_category': task.category,
                                          'task_id': task.key.id()})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
@@ -167,6 +166,7 @@ class ViewTask(webapp2.RequestHandler):
         task_title = self.request.get('task_title')
         task = model.get_task(owner_email, task_title)
         owner_display_name = model.get_name_by_email(owner_email)
+        owner_rating = model.get_rating(owner_email)
         if task:
             response_content = {'task_title': task.title,
                                 'task_category': task.category,
@@ -178,6 +178,7 @@ class ViewTask(webapp2.RequestHandler):
                                 'task_owner': task.owner_email,
                                 'owner_name': owner_display_name,
                                 'extra_credit': task.credit,
+                                'rating': owner_rating,
                                 'task_id': task.key.id()}
             self.response.headers['Content-Type'] = 'application/json'
             self.response.out.write(json.dumps(response_content))
@@ -218,7 +219,19 @@ class ChangeStatus(webapp2.RequestHandler):
         task_title = self.request.get('task_title')
         requestee = self.request.get('requestee')
         status = self.request.get('status')
+        rating = self.request.get('rating')
         model.update_task(owner, task_title, requestee, status)
+        if rating:
+            model.update_rating(owner, rating)
+
+
+class GetRating(webapp2.RequestHandler):
+    def get(self):
+        owner = self.request.get('user_email')
+        response_content = {'rating': model.get_rating(owner)}
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps(response_content))
+
 
 
 # [START app]
@@ -235,6 +248,7 @@ app = webapp2.WSGIApplication([
     ('/android/change_status', ChangeStatus),
     ('/android/profile_image', ProfileImage),
     ('/android/change_status', ChangeStatus),
+    ('/android/get_rating', GetRating),
     ('/android/delete_task', DeleteTask)
 ], debug=True)
 # [END app]

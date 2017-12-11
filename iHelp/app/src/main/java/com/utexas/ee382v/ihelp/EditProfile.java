@@ -101,6 +101,8 @@ public class EditProfile extends MainActivity {
         StrictMode.setVmPolicy(builder.build());
 
         profile_img_btn = (ImageButton) findViewById(R.id.profileButton);
+        final String image_url = MainActivity.getEndpoint() + "/android/profile_image?user_email=" + MainActivity.getUserEmail();
+        Picasso.with(this).load(image_url).fit().into(profile_img_btn);
         profile_img_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -419,5 +421,6 @@ public class EditProfile extends MainActivity {
                 + "/android/profile_image?user_email=" + MainActivity.getUserEmail()
                 + "&time=" + Double.toString(System.nanoTime());
         Picasso.with(mContext).load(image_url).fit().into(profile_img_btn);
+
     }
 }

@@ -3,6 +3,8 @@
         <item>Food</item>
         <item>Drink</item>
         <item>Ride</item>
+        <item>Delivery</item>
+        <item>Study</item>
         <item>Other</item>
     </string-array>
 
@@ -55,5 +57,10 @@
     <string name="title_activity_edit_profile">EditProfile</string>
     <string name="title_activity_crop_image">CropImage</string>
     <string name="default_media_location_folder">ihelp_msg_media</string>
-
+    <string name="new_task_created">New Task Created</string>
+    <string name="rate_task">Rate this task</string>
+    <string name="rating_cancel">Cancel</string>
+    <string name="rating_confirm">Confirm</string>
+    <string name="location">Location:</string>
+    <string name="Destination">Destination:</string>
 </resources>

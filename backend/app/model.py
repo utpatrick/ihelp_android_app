@@ -5,8 +5,8 @@ class User(ndb.Model):
     user_email = ndb.StringProperty()
     user_name = ndb.StringProperty()
     display_name = ndb.StringProperty()
-    rating = ndb.IntegerProperty()
-    ratings_all = ndb.IntegerProperty(repeated=True)
+    rating = ndb.FloatProperty()
+    ratings_all = ndb.FloatProperty(repeated=True)
     credit = ndb.IntegerProperty()
     profile_image = ndb.BlobProperty()
 
@@ -35,11 +35,17 @@ class Task(ndb.Model):
 
 def post_a_task(task_title, task_category, task_type, task_detail,
                 task_location, desitination_location, task_status,
-                task_onwer, extra_credit, expiration_time = 3600):
-    new_task = Task(title=task_title, category=task_category, type=task_type, description=task_detail,
-                    task_location=task_location, final_dest=desitination_location, status=task_status,
-                    owner_email=task_onwer, credit=10)
-    new_task.put()
+                task_owner, extra_credit, expiration_time = 3600):
+    if task_type == 'provide_help':
+        new_task = Task(title=task_title, helper=task_owner, category=task_category, type=task_type, description=task_detail,
+                        task_location=task_location, final_dest=desitination_location, status=task_status,
+                        owner_email=task_owner, credit=10)
+        new_task.put()
+    else:
+        new_task = Task(title=task_title, helpee=task_owner, category=task_category, type=task_type, description=task_detail,
+                        task_location=task_location, final_dest=desitination_location, status=task_status,
+                        owner_email=task_owner, credit=10)
+        new_task.put()
     return 0
 
 
@@ -111,9 +117,10 @@ def update_task(owner_email, task_title, requestee, status):
     if task:
         if status == 'Posted':
             task.status = 'Ongoing'
-        elif status == 'Pending':
+        elif status == 'Ongoing':
             task.status = 'Completed'
-
+        elif status == 'Drafting':
+            task.status = 'Posted'
         if task.type == 'provide_help':
             task.helpee = requestee
         elif task.type == 'need_help':
@@ -133,7 +140,7 @@ def create_user(user_email, user_name, profile_image):
     else:
         new_user = User(user_email=user_email, user_name=user_name,
                         display_name=user_name, profile_image=profile_image,
-                        credit=50, rating=5, ratings_all=[5])
+                        credit=50, rating=5.0, ratings_all=[5.0])
         new_user.put()
         return 0
 
@@ -146,3 +153,17 @@ def update_profile(user_email, display_name, profile_image):
     return 0
 
 
+def get_rating(user_email):
+    user = get_user_by_email(user_email)
+    if user:
+        print(user.rating)
+        return user.rating
+
+
+def update_rating(user_email, rating):
+    user = get_user_by_email(user_email)
+    if user:
+        user.ratings_all.append(float(rating))
+        user.rating = sum(user.ratings_all) / len(user.ratings_all)
+        print(user.rating)
+        user.put()
