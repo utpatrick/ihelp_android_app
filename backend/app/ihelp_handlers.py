@@ -65,7 +65,7 @@ class ManageTasks(webapp2.RequestHandler):
     def get(self):
         owner_email = self.request.get('owner_email')
         task_status = self.request.get('task_status')
-        all_tasks = model.get_tasks_by_email(owner_email)
+        all_tasks = model.get_task_for_manage(owner_email)
         sorted_task = sorted(all_tasks, key=lambda x: x.last_update, reverse=True)
         response_content = []
         for task in sorted_task:
