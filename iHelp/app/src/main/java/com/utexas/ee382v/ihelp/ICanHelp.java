@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,8 @@ public class ICanHelp extends Fragment {
             longitude = location.getLongitude();
         }
         url += "?latitude="+ latitude + "&longitude=" + longitude;
+        Log.d("geolocation", url);
+
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {

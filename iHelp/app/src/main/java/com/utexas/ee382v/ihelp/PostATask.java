@@ -2,11 +2,9 @@ package com.utexas.ee382v.ihelp;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -15,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -56,6 +53,7 @@ public class PostATask extends Fragment implements View.OnClickListener{
     private Location location;
     public String task_location;
     public String task_destination;
+
 
     ProgressDialog progressDialog;
 
@@ -152,6 +150,23 @@ public class PostATask extends Fragment implements View.OnClickListener{
         else return "not_selected";
     }
 
+    public String get_task_latitude() {
+        float lat = 0;
+        if (location != null) {
+            lat = (float) location.getLatitude();
+        }
+        return String.valueOf(lat);
+    }
+
+    public String get_task_longitude() {
+        float lon = 0;
+        if (location != null) {
+            lon = (float) location.getLongitude();
+        }
+        return String.valueOf(lon);
+    }
+
+
     @Override
     public void onClick(View view) {
         Log.d("uploading", "clicked");
@@ -165,15 +180,16 @@ public class PostATask extends Fragment implements View.OnClickListener{
             progressDialog.setMessage("Posting, please wait...");
             progressDialog.show();
 
-            double latitude = 0, longitude = 0;
+            float latitude = 0;
+            float longitude = 0;
             if (location != null) {
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
+                latitude = (float) location.getLatitude();
+                longitude = (float) location.getLongitude();
             }
 
-            final String request_url = MainActivity.getEndpoint() + "/android/post_a_task?latitude="
-                    + latitude + "&longitude=" + longitude;
+            final String request_url = MainActivity.getEndpoint() + "/android/post_a_task";
 
+            final float finalLatitude = latitude;
             VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, request_url, new Response.Listener<NetworkResponse>() {
                 @Override
                 public void onResponse(NetworkResponse response) {
@@ -252,6 +268,10 @@ public class PostATask extends Fragment implements View.OnClickListener{
                     params.put("task_onwer", MainActivity.getUserEmail());
                     params.put("credit", "100");
                     params.put("owner_name", MainActivity.getUserName());
+                    params.put("task_latitude", "0.0");
+                    params.put("task_longitude","0.0");
+                    //params.put("task_latitude", get_task_latitude());
+                    //params.put("task_longitude",get_task_longitude());
                     return params;
                 }
             };

@@ -1,17 +1,9 @@
 package com.utexas.ee382v.ihelp;
 
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -32,7 +24,6 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
-//import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -48,9 +39,10 @@ import com.google.android.gms.common.api.Status;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
+//import com.google.android.gms.auth.api.signin.GoogleSignIn;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener{
 
@@ -68,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static String gname;
     private static String gmail;
     private boolean signinStatus;
-    private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com/";
+    private static final String BACKEND_ENDPOINT = "http://10.0.2.2:8888";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
