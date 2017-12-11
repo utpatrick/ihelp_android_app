@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean signinStatus;
 
     private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com/";
+    //private static final String BACKEND_ENDPOINT = "https://10.0.2.2/8888";
     private VideoView mVideoView;
 
     @Override
