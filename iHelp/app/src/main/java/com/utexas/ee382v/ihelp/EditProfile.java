@@ -125,6 +125,8 @@ public class EditProfile extends MainActivity {
                 uploadProfileImage();
                 setResult(RESULT_OK);
                 finish();
+                Intent intent = new Intent(getApplicationContext(), ViewAll.class);
+                startActivity(intent);
             }
         });
 
