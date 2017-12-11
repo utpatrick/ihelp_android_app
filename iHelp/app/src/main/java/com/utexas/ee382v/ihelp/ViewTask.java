@@ -68,9 +68,7 @@ public class ViewTask extends AppCompatActivity {
                     TextView nameView = findViewById(R.id.view_task_name);
                     nameView.setText(owner_name);
                     // slot for saving helper_email
-                    if(helper_email != null) {
-                        nameView.setTag(helper_email);
-                    }
+                    nameView.setTag(helper_email);
                     ImageView imageView = findViewById(R.id.view_task_image);
                     String url = MainActivity.getEndpoint() +
                             "/android/profile_image?user_email=" + owner_email;
@@ -78,9 +76,7 @@ public class ViewTask extends AppCompatActivity {
                     TextView titleView = findViewById(R.id.view_task_title);
                     titleView.setText(title);
                     // slot for saving helper_email
-                    if(helpee_email != null) {
-                        titleView.setTag(helpee_email);
-                    }
+                    titleView.setTag(helpee_email);
                     TextView locationView = findViewById(R.id.view_task_location);
                     locationView.setText("Location: " + location);
                     TextView destView = findViewById(R.id.view_task_dest);
@@ -90,16 +86,7 @@ public class ViewTask extends AppCompatActivity {
                     TextView statusView = findViewById(R.id.view_task_status);
                     Button action = findViewById(R.id.view_task_action_btn);
 
-                    //helper
-                    TextView helperView = findViewById(R.id.view_task_name);
-                    //helpee
-                    TextView helpeeView = findViewById(R.id.view_task_title);
-
-                    if(helpeeView.getTag() != null && helperView.getTag() != null) {
-                        helper_email = helperView.getTag().toString();
-                        helpee_email = helpeeView.getTag().toString();
-                        Log.d("helper_email", helper_email);
-                        Log.d("helpee_email", helpee_email);
+                    if(!nameView.getTag().toString().equals("null") && !titleView.getTag().toString().equals("null")) {
                         chat_btn.setVisibility(View.VISIBLE);
                     }
 
@@ -130,7 +117,6 @@ public class ViewTask extends AppCompatActivity {
                             statusView.setText(R.string.drafting);
                             statusView.setTextColor(getResources().getColor(R.color.red));
                         }
-
                     }
 
                     if ("provide_help".equals(type)) {
