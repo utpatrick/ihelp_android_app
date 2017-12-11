@@ -52,10 +52,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected static String gmail;
     private static String user_display_name;
     private boolean signinStatus;
+
     private Context mContext;
 
     private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com";
@@ -180,27 +179,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mVideoView = (VideoView)findViewById(R.id.bgvideoview);
-        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg);
-        mVideoView.setVideoURI(uri);
-        mVideoView.start();
 
-        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.setLooping(true);
-
-            }
-        });
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        mVideoView = (VideoView)findViewById(R.id.bgvideoview);
+//        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg);
+//        mVideoView.setVideoURI(uri);
+//        mVideoView.start();
+//
+//        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//            @Override
+//            public void onPrepared(MediaPlayer mp) {
+//                mp.setLooping(true);
+//
+//            }
+//        });
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//    }
 
 
     public static String getUserName() {
