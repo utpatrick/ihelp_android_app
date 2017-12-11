@@ -123,7 +123,7 @@ def update_task(owner_email, task_title, requestee, status):
             task.status = 'Posted'
         if task.type == 'provide_help':
             task.helpee = requestee
-        elif task.type == 'need_help':
+        elif task.type == 'seek_help':
             task.helper = requestee
         task.put()
 

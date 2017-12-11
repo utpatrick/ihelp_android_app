@@ -22,13 +22,17 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.applozic.audiovideo.activity.AudioCallActivityV2;
+import com.applozic.audiovideo.activity.VideoActivity;
 import com.applozic.mobicomkit.Applozic;
+import com.applozic.mobicomkit.ApplozicClient;
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
 import com.applozic.mobicomkit.api.account.user.MobiComUserPreference;
 import com.applozic.mobicomkit.api.account.user.PushNotificationTask;
 import com.applozic.mobicomkit.api.account.user.User;
 import com.applozic.mobicomkit.api.account.user.UserLoginTask;
 import com.applozic.mobicomkit.api.account.user.UserLogoutTask;
+import com.applozic.mobicomkit.uiwidgets.ApplozicSetting;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -52,7 +56,9 @@ import com.google.android.gms.common.api.Status;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 //import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -75,8 +81,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static String user_display_name;
     private boolean signinStatus;
     private Context mContext;
+
     private static final String BACKEND_ENDPOINT = "https://firebase-ihelp.appspot.com";
-    //private static final String BACKEND_ENDPOINT = "http://10.0.2.2:8888";
+//    private static final String BACKEND_ENDPOINT = "http://10.0.2.2:8080";
     private VideoView mVideoView;
 
     @Override
@@ -172,7 +179,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
-    
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mVideoView = (VideoView)findViewById(R.id.bgvideoview);
+        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.bg);
+        mVideoView.setVideoURI(uri);
+        mVideoView.start();
+
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping(true);
+
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
 
     public static String getUserName() {
         if(gname != null) {
@@ -272,6 +301,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 };
                 pushNotificationTask = new PushNotificationTask(Applozic.getInstance(context).getDeviceRegistrationId(),listener,context);
                 pushNotificationTask.execute((Void)null);
+                ApplozicClient.getInstance(context).setHandleDial(true).setIPCallEnabled(true);
+                Map<ApplozicSetting.RequestCode, String> activityCallbacks = new HashMap<ApplozicSetting.RequestCode, String>();
+                activityCallbacks.put(ApplozicSetting.RequestCode.AUDIO_CALL, AudioCallActivityV2.class.getName());
+                activityCallbacks.put(ApplozicSetting.RequestCode.VIDEO_CALL, VideoActivity.class.getName());
+                ApplozicSetting.getInstance(context).setActivityCallbacks(activityCallbacks);
             }
 
             @Override
@@ -287,6 +321,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         user.setAuthenticationTypeId(User.AuthenticationType.APPLOZIC.getValue());  //User.AuthenticationType.APPLOZIC.getValue() for password verification from Applozic server and User.AuthenticationType.CLIENT.getValue() for access Token verification from your server set access token as password
         user.setPassword(""); //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
         user.setImageLink("");//optional, set your image link if you have
+        List<String> featureList =  new ArrayList<>();
+        featureList.add(User.Features.IP_AUDIO_CALL.getValue());// FOR AUDIO
+        featureList.add(User.Features.IP_VIDEO_CALL.getValue());// FOR VIDEO
+        user.setFeatures(featureList);
         new UserLoginTask(user, listener, this).execute((Void) null);
     }
 
