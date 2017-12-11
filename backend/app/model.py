@@ -15,7 +15,7 @@ class Task(ndb.Model):
     owner_email = ndb.StringProperty()
     helper = ndb.StringProperty()
     #helpee is the one who is helped by helper
-    helpee = ndb.StringProperty
+    helpee = ndb.StringProperty()
 
     title = ndb.StringProperty()
     description = ndb.StringProperty()

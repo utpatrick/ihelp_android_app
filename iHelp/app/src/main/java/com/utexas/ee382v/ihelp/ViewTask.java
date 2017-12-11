@@ -3,6 +3,7 @@ package com.utexas.ee382v.ihelp;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,6 +25,8 @@ import org.json.JSONObject;
 public class ViewTask extends AppCompatActivity {
 
     private Button chat_btn;
+    private static String helper_email;
+    private static String helpee_email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,15 @@ public class ViewTask extends AppCompatActivity {
         String[] contents = extra.split(",");
         String url = MainActivity.getEndpoint() + "/android/view_task?task_owner="
                 + contents[0] + "&task_title=" + contents[1];
+
+        chat_btn = (Button) findViewById(R.id.chat_btn);
+        chat_btn.setVisibility(View.GONE);
+        chat_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openConversation(view);
+            }
+        });
 
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url,
                 null, new Response.Listener<JSONObject>() {
@@ -46,20 +58,29 @@ public class ViewTask extends AppCompatActivity {
                     String location = response.getString("task_location");
                     String destination = response.getString("destination");
                     String owner_name = response.getString("owner_name");
-
                     String owner_email = response.getString("task_owner");
                     String credit = response.getString("extra_credit");
                     String status = response.getString("task_status");
 
+                    helper_email = response.getString("helper_email");
+                    helpee_email = response.getString("helpee_email");
+
                     TextView nameView = findViewById(R.id.view_task_name);
                     nameView.setText(owner_name);
-                    nameView.setTag(owner_email);
+                    // slot for saving helper_email
+                    if(helper_email != null) {
+                        nameView.setTag(helper_email);
+                    }
                     ImageView imageView = findViewById(R.id.view_task_image);
                     String url = MainActivity.getEndpoint() +
                             "/android/profile_image?user_email=" + owner_email;
                     Picasso.with(getApplicationContext()).load(url).fit().into(imageView);
                     TextView titleView = findViewById(R.id.view_task_title);
                     titleView.setText(title);
+                    // slot for saving helper_email
+                    if(helpee_email != null) {
+                        titleView.setTag(helpee_email);
+                    }
                     TextView locationView = findViewById(R.id.view_task_location);
                     locationView.setText("Location: " + location);
                     TextView destView = findViewById(R.id.view_task_dest);
@@ -69,7 +90,20 @@ public class ViewTask extends AppCompatActivity {
                     TextView statusView = findViewById(R.id.view_task_status);
                     Button action = findViewById(R.id.view_task_action_btn);
 
-                    if ("posted".equals(status)) {
+                    //helper
+                    TextView helperView = findViewById(R.id.view_task_name);
+                    //helpee
+                    TextView helpeeView = findViewById(R.id.view_task_title);
+
+                    if(helpeeView.getTag() != null && helperView.getTag() != null) {
+                        helper_email = helperView.getTag().toString();
+                        helpee_email = helpeeView.getTag().toString();
+                        Log.d("helper_email", helper_email);
+                        Log.d("helpee_email", helpee_email);
+                        chat_btn.setVisibility(View.VISIBLE);
+                    }
+
+                    if ("Posted".equals(status)) {
                         statusView.setText(R.string.posted);
                         statusView.setTextColor(getResources().getColor(R.color.green));
                         if ("provide_help".equals(type)) {
@@ -77,7 +111,7 @@ public class ViewTask extends AppCompatActivity {
                         } else {
                             action.setText(R.string.provide_help);
                         }
-                    } else if ("pending".equals(status)){
+                    } else if ("Ongoing".equals(status)){
                         statusView.setText(R.string.posted);
                         statusView.setTextColor(getResources().getColor(R.color.yellow));
 
@@ -89,10 +123,10 @@ public class ViewTask extends AppCompatActivity {
                         }
 
                     } else {
-                        if ("completed".equals(status)) {
+                        if ("Completed".equals(status)) {
                             statusView.setText(R.string.completed);
                             statusView.setTextColor(getResources().getColor(R.color.blue));
-                        } else if ("drafting".equals(status)){
+                        } else if ("Drafting".equals(status)){
                             statusView.setText(R.string.drafting);
                             statusView.setTextColor(getResources().getColor(R.color.red));
                         }
@@ -118,22 +152,20 @@ public class ViewTask extends AppCompatActivity {
         });
 
         Volley.newRequestQueue(this).add(jsonRequest);
-
-        chat_btn = (Button) findViewById(R.id.chat_btn);
-        chat_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openConversation(view);
-            }
-        });
     }
 
     private void openConversation(View view){
-        TextView nameView = findViewById(R.id.view_task_name);
+
         Intent intent = new Intent(this, ConversationActivity.class);
-        intent.putExtra(ConversationUIService.USER_ID, nameView.getTag().toString());
+        String contact_id = "";
+        if(helper_email.equals(MainActivity.getUserEmail())){
+            contact_id = helpee_email;
+        }else if(helpee_email.equals(MainActivity.getUserEmail())){
+            contact_id = helper_email;
+        }
+        intent.putExtra(ConversationUIService.USER_ID, contact_id);
         intent.putExtra(ConversationUIService.DISPLAY_NAME, "Receiver display name"); //put it for displaying the title.
-        intent.putExtra(ConversationUIService.TAKE_ORDER,true); //Skip chat list for showing on back press
+        intent.putExtra(ConversationUIService.TAKE_ORDER, true); //Skip chat list for showing on back press
         startActivity(intent);
     }
 
