@@ -65,7 +65,7 @@ class ManageTasks(webapp2.RequestHandler):
     def get(self):
         owner_email = self.request.get('owner_email')
         task_status = self.request.get('task_status')
-        all_tasks = model.get_tasks_by_email(owner_email)
+        all_tasks = model.get_task_for_manage(owner_email)
         sorted_task = sorted(all_tasks, key=lambda x: x.last_update, reverse=True)
         response_content = []
         for task in sorted_task:
@@ -132,13 +132,22 @@ class ICanHelp(webapp2.RequestHandler):
         tasks = model.get_tasks_by_type('seek_help')
         sorted_task = sorted(tasks, key=lambda x: x.last_update, reverse=True)
         response_content = []
+        main_category = {'Food', 'Drink', 'Ride'}
         for task in sorted_task:
-            if (not category or task.category == category) and task.status == 'Posted':
-                response_content.append({'task_title': task.title,
-                                         'task_detail': task.description,
-                                         'task_owner': task.owner_email,
-                                         'task_category': task.category,
-                                         'task_id': task.key.id()})
+            if category == 'Other':
+                if task.category not in main_category and task.status == 'Posted':
+                    response_content.append({'task_title': task.title,
+                                             'task_detail': task.description,
+                                             'task_owner': task.owner_email,
+                                             'task_category': task.category,
+                                             'task_id': task.key.id()})
+            else:
+                if (not category or task.category == category) and task.status == 'Posted':
+                    response_content.append({'task_title': task.title,
+                                             'task_detail': task.description,
+                                             'task_owner': task.owner_email,
+                                             'task_category': task.category,
+                                             'task_id': task.key.id()})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
@@ -149,13 +158,22 @@ class INeedHelp(webapp2.RequestHandler):
         tasks = model.get_tasks_by_type('provide_help')
         sorted_task = sorted(tasks, key=lambda x: x.last_update, reverse=True)
         response_content = []
+        main_category = {'Food', 'Drink', 'Ride'}
         for task in sorted_task:
-            if (not category or task.category == category) and task.status == 'Posted':
-                response_content.append({'task_title': task.title,
-                                         'task_detail': task.description,
-                                         'task_owner': task.owner_email,
-                                         'task_category': task.category,
-                                         'task_id': task.key.id()})
+            if category == 'Other':
+                if task.category not in main_category and task.status == 'Posted':
+                    response_content.append({'task_title': task.title,
+                                             'task_detail': task.description,
+                                             'task_owner': task.owner_email,
+                                             'task_category': task.category,
+                                             'task_id': task.key.id()})
+            else:
+                if (not category or task.category == category) and task.status == 'Posted':
+                    response_content.append({'task_title': task.title,
+                                             'task_detail': task.description,
+                                             'task_owner': task.owner_email,
+                                             'task_category': task.category,
+                                             'task_id': task.key.id()})
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 

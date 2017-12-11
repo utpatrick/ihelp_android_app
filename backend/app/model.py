@@ -123,7 +123,7 @@ def update_task(owner_email, task_title, requestee, status):
             task.status = 'Posted'
         if task.type == 'provide_help':
             task.helpee = requestee
-        elif task.type == 'need_help':
+        elif task.type == 'seek_help':
             task.helper = requestee
         task.put()
 
@@ -167,3 +167,8 @@ def update_rating(user_email, rating):
         user.rating = sum(user.ratings_all) / len(user.ratings_all)
         print(user.rating)
         user.put()
+
+
+def get_task_for_manage(email):
+    filter_tasks = Task.query(ndb.OR(Task.helpee == email, Task.helper == email))
+    return filter_tasks
