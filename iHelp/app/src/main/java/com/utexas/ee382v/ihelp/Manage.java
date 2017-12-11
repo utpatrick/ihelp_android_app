@@ -154,7 +154,7 @@ public class Manage extends Fragment {
                         try{
                             String rating = response.getString("rating");
                             if (rating != null) {
-                                ratingView.setText(rating + " / 5.0");
+                                ratingView.setText(String.format("%.2f", Float.valueOf(rating)) + " / 5.0");
                             } else {
                                 ratingView.setText("N/A");
                             }

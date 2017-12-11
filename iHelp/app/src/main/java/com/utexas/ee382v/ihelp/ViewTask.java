@@ -92,6 +92,7 @@ public class ViewTask extends AppCompatActivity {
                     destView.setTextColor(getResources().getColor(R.color.coral));
                     TextView contentView = findViewById(R.id.view_task_content);
                     contentView.setText(detail);
+                    contentView.setTag(owner_email);
                     TextView statusView = findViewById(R.id.view_task_status);
                     Button action = findViewById(R.id.view_task_action_btn);
 
@@ -167,8 +168,8 @@ public class ViewTask extends AppCompatActivity {
     }
 
     public void sumbitRequest(View view) {
-        TextView nameView = findViewById(R.id.view_task_name);
-        String owner = (String) nameView.getTag();
+        TextView contentView = findViewById(R.id.view_task_content);
+        String owner = (String) contentView.getTag();
         TextView titleView = findViewById(R.id.view_task_title);
         String title = (String) titleView.getText();
         TextView statusView = findViewById(R.id.view_task_status);
