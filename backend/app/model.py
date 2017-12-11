@@ -1,3 +1,5 @@
+from math import radians, sin, cos, asin, sqrt
+
 from google.appengine.ext import ndb
 
 
@@ -15,7 +17,7 @@ class Task(ndb.Model):
     owner_email = ndb.StringProperty()
     helper = ndb.StringProperty()
     #helpee is the one who is helped by helper
-    helpee = ndb.StringProperty
+    helpee = ndb.StringProperty()
 
     title = ndb.StringProperty()
     description = ndb.StringProperty()
@@ -32,11 +34,17 @@ class Task(ndb.Model):
     credit = ndb.IntegerProperty()
     status = ndb.StringProperty(choices=['Drafting', 'Posted', 'Completed', 'Ongoing', 'Deleted'])
 
+    #location info
+    latitude = ndb.FloatProperty()
+    longitude = ndb.FloatProperty()
 
-def post_a_task(task_title, task_category, task_type, task_detail,
+
+
+
+def post_a_task(task_latitude, task_longitude, task_title, task_category, task_type, task_detail,
                 task_location, desitination_location, task_status,
                 task_onwer, extra_credit, expiration_time = 3600):
-    new_task = Task(title=task_title, category=task_category, type=task_type, description=task_detail,
+    new_task = Task(latitude=float(task_latitude), longitude=float(task_longitude), title=task_title, category=task_category, type=task_type, description=task_detail,
                     task_location=task_location, final_dest=desitination_location, status=task_status,
                     owner_email=task_onwer, credit=10)
     new_task.put()
@@ -126,7 +134,7 @@ def get_user_by_email(user_email):
     return user.get()
 
 
-def create_user(user_email, user_name, profile_image):
+def create_user(user_latitude, user_longitude, user_email, user_name, profile_image):
     check_existing = get_user_by_email(user_email)
     if check_existing:
         return 1
@@ -145,4 +153,24 @@ def update_profile(user_email, display_name, profile_image):
     user.put()
     return 0
 
+def get_nearby_task (latitude, longitude, start, count):
+    tasks = Task.query().fetch()
+    sorted(tasks, key=lambda task: get_distance(longitude, latitude, tasks.longitude, tasks.latitude))
+    return tasks[start:(start + count)]
+
+def get_distance(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points
+    on the earth
+    """
+    # convert decimal degrees to radians
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+    # haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+    # Radius of earth in kilometers is 6371
+    km = 6371* c
+    return km
 

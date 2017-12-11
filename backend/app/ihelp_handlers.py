@@ -30,9 +30,11 @@ class PostATask(webapp2.RequestHandler):
         task_onwer = self.request.get('task_onwer')
         extra_credit = self.request.get('extra_credit')
         owner_name = self.request.get('owner_name')
+        task_latitude = self.request.get('task_latitude')
+        task_longitude = self.request.get('task_longitude')
         #expiration_time = self.request.get('expiration_time')
 
-        post_status = model.post_a_task(task_title, task_category, task_type, task_detail,
+        post_status = model.post_a_task(task_latitude, task_longitude, task_title, task_category, task_type, task_detail,
                                         task_location, desitination_location, task_status,
                                         task_onwer, extra_credit)
         if post_status == 0:
@@ -56,7 +58,10 @@ class GetAllTasks(webapp2.RequestHandler):
                              'task_status': s.status,
                              'task_onwer': s.owner_email,
                              'extra_credit': s.credit,
+                             'task_latitude':s.latitude,
+                             'task_longitude':s.longitude,
                              'task_id': s.key.id()} for s in sorted_task]
+
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
@@ -127,14 +132,26 @@ class ProfileImage(webapp2.RequestHandler):
 
 class ICanHelp(webapp2.RequestHandler):
     def get(self):
+        lat = self.request.get('latitude')
+        lon = self.request.get('longitude')
+        latitude = float(lat)
+        longitude = float(lon)
+        #print("latitude is :" + latitude)
+        #print("longitude is :" + longitude)
+
         category = self.request.get('category')
         tasks = model.get_tasks_by_type('seek_help')
         sorted_task = sorted(tasks, key=lambda x: x.last_update, reverse=True)
         response_content = []
         for task in sorted_task:
+            #print(longitude)
+            #print(latitude)
+            distance =  model.get_distance(task.longitude, task.latitude, longitude, latitude)
+            if distance > 1:
+                continue
+
             owner = task.owner_email
             if (not category or task.category == category) and task.status == 'Posted':
-            profile_image = model.get_icon(owner)
                 response_content.append({'task_title': task.title,
                                          'task_detail': task.description,
                                          'task_owner': task.owner_email,
@@ -145,15 +162,23 @@ class ICanHelp(webapp2.RequestHandler):
 
 class INeedHelp(webapp2.RequestHandler):
     def get(self):
+        lat = self.request.get('latitude')
+        lon = self.request.get('longitude')
+        latitude = float(str(lat))
+        longitude = float(str(lon))
+
         category = self.request.get('category')
         tasks = model.get_tasks_by_type('provide_help')
         sorted_task = sorted(tasks, key=lambda x: x.last_update, reverse=True)
         response_content = []
         for task in sorted_task:
+            distance = model.get_distance(task.longitude, task.latitude, longitude, latitude)
+            if distance > 10:
+                continue
+
             owner = task.owner_email
             if (not category or task.category == category) and task.status == ('Posted' or 'Ongoing'):
-            profile_image = model.get_icon(owner)
-            response_content.append({'task_title': task.title,
+                response_content.append({'task_title': task.title,
                                          'task_detail': task.description,
                                          'task_owner': task.owner_email,
                                          'task_id': task.key.id()})
