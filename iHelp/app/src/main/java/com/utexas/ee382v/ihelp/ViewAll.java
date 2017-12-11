@@ -51,16 +51,18 @@ public class ViewAll extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if(Build.VERSION.SDK_INT >= 19) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
         else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-        if(MainActivity.getUserEmail() == null){
-            Intent intent = new Intent(this,MainActivity.class);
+        if(MainActivity.getUserEmail() == null) {
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
+
         setContentView(R.layout.activity_view_all);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
