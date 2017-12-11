@@ -119,12 +119,6 @@ public class TaskListAdapter extends ArrayAdapter<TaskCard>{
                 + "/android/profile_image?user_email=" + item.getOwnerEmail()
                 + "&time=" + Double.toString(System.nanoTime());
         Log.d("image_link", link);
-        if (link == null || link.length() < 1 || link.startsWith("/static/images/")) {
-            Picasso.with(mContext).load(R.drawable.active_dots).into(holder.imageView);
-        } else {
-            Log.d("image_plotted", "successful!");
-            Picasso.with(mContext).load(link).fit().into(holder.imageView);
-        }
         return view;
     }
 }

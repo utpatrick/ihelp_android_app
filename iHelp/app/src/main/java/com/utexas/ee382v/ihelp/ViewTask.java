@@ -1,6 +1,7 @@
 package com.utexas.ee382v.ihelp;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -19,12 +20,27 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.applozic.audiovideo.activity.AudioCallActivityV2;
+import com.applozic.audiovideo.activity.VideoActivity;
+import com.applozic.mobicomkit.Applozic;
+import com.applozic.mobicomkit.ApplozicClient;
+import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
+import com.applozic.mobicomkit.api.account.user.PushNotificationTask;
+import com.applozic.mobicomkit.api.account.user.User;
+import com.applozic.mobicomkit.api.account.user.UserLoginTask;
+import com.applozic.mobicomkit.api.account.user.UserService;
+import com.applozic.mobicomkit.contact.AppContactService;
+import com.applozic.mobicomkit.uiwidgets.ApplozicSetting;
 import com.applozic.mobicomkit.uiwidgets.conversation.ConversationUIService;
 import com.applozic.mobicomkit.uiwidgets.conversation.activity.ConversationActivity;
+import com.applozic.mobicommons.people.contact.Contact;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ViewTask extends AppCompatActivity {
 
@@ -92,6 +108,7 @@ public class ViewTask extends AppCompatActivity {
                     destView.setTextColor(getResources().getColor(R.color.coral));
                     TextView contentView = findViewById(R.id.view_task_content);
                     contentView.setText(detail);
+                    contentView.setTag(owner_email);
                     TextView statusView = findViewById(R.id.view_task_status);
                     Button action = findViewById(R.id.view_task_action_btn);
 
@@ -160,15 +177,22 @@ public class ViewTask extends AppCompatActivity {
         }else if(helpee_email.equals(MainActivity.getUserEmail())){
             contact_id = helper_email;
         }
+
+        UserService.getInstance(this).processUserDetails(contact_id);
+        AppContactService appContactService = new AppContactService(this);
+        Contact contact = appContactService.getContactById(contact_id);
+        if(contact != null){
+            Log.e("Friend Display Name", contact.getDisplayName());
+        }
         intent.putExtra(ConversationUIService.USER_ID, contact_id);
-        intent.putExtra(ConversationUIService.DISPLAY_NAME, "Receiver display name"); //put it for displaying the title.
+        intent.putExtra(ConversationUIService.DISPLAY_NAME, contact.getDisplayName()); //put it for displaying the title.
         intent.putExtra(ConversationUIService.TAKE_ORDER, true); //Skip chat list for showing on back press
         startActivity(intent);
     }
 
     public void sumbitRequest(View view) {
-        TextView nameView = findViewById(R.id.view_task_name);
-        String owner = (String) nameView.getTag();
+        TextView contentView = findViewById(R.id.view_task_content);
+        String owner = (String) contentView.getTag();
         TextView titleView = findViewById(R.id.view_task_title);
         String title = (String) titleView.getText();
         TextView statusView = findViewById(R.id.view_task_status);
