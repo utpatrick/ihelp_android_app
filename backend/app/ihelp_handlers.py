@@ -219,6 +219,8 @@ class DeleteTask(webapp2.RequestHandler):
         post_status = model.delete_task(owner_email, task_id)
         if post_status == 0:
             response_content = {'status': 'ok'}
+        elif post_status == 1:
+            response_content = {'status': 'invalid'} 
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(response_content))
 
